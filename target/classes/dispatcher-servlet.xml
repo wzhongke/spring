@@ -51,13 +51,24 @@
           p:ultimateAnswer="45">
     </bean>
 
+    <bean id="targetBean" class="examples.instantiating.ExampleRef"/>
+
     <bean id="exampleBean6" class="examples.instantiating.ExampleBean">
-        <!-- typed as a java.util.Properties -->
-        <property name="properties">
-            <value>
-                years=666
-                ultimateAnswer=666
-            </value>
+        <property name="ref">
+            <idref bean="targetBean" />
         </property>
     </bean>
+    <bean id="exampleBean7" class="examples.instantiating.ExampleBean">
+        <property name="ref">
+            <ref bean="targetBean"/>
+        </property>
+    </bean>
+
+    <!-- inner beans -->
+    <bean id="outer" class="examples.instantiating.ExampleBean">
+        <property name="target">
+            <bean class="examples.instantiating.ExampleRef" />
+        </property>
+    </bean>
+
 </beans>
