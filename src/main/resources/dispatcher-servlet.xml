@@ -66,9 +66,40 @@
 
     <!-- inner beans -->
     <bean id="outer" class="examples.instantiating.ExampleBean">
-        <property name="target">
+        <property name="ref">
             <bean class="examples.instantiating.ExampleRef" />
         </property>
     </bean>
 
+    <!--<bean id="moreComplexObject" class="examples.instantiating.ComplexObject">-->
+        <!--&lt;!&ndash; results in a setAdminEmails(java.util.Properties) call &ndash;&gt;-->
+        <!--<property name="adminEmails">-->
+            <!--<props>-->
+                <!--<prop key="administrator">administrator@example.org</prop>-->
+                <!--<prop key="support">support@example.org</prop>-->
+                <!--<prop key="development">development@example.org</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+        <!--&lt;!&ndash; results in a setSomeList(java.util.List) call &ndash;&gt;-->
+        <!--<property name="someList">-->
+            <!--<list>-->
+                <!--<value>a list element followed by a reference</value>-->
+                <!--<ref bean="" />-->
+            <!--</list>-->
+        <!--</property>-->
+        <!--&lt;!&ndash; results in a setSomeMap(java.util.Map) call &ndash;&gt;-->
+        <!--<property name="someMap">-->
+            <!--<map>-->
+                <!--<entry key="an entry" value="just some string"/>-->
+                <!--<entry key ="a ref" value-ref="myDataSource"/>-->
+            <!--</map>-->
+        <!--</property>-->
+        <!--&lt;!&ndash; results in a setSomeSet(java.util.Set) call &ndash;&gt;-->
+        <!--<property name="someSet">-->
+            <!--<set>-->
+                <!--<value>just some string</value>-->
+                <!--<ref bean="myDataSource" />-->
+            <!--</set>-->
+        <!--</property>-->
+    <!--</bean>-->
 </beans>

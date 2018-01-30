@@ -15,8 +15,17 @@ public class ExampleBeanTest {
 	@Qualifier("exampleBean5")
 	ExampleBean bean;
 
+	@Autowired
+    @Qualifier("exampleBean6")
+    ExampleBean bean6;
+
 	@Test
 	public void testExampleBean () {
 		System.out.println(bean);
 	}
+
+	@Test
+	public void testIdRef () {
+        System.out.println(bean6);
+    }
 }
