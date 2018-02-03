@@ -15,6 +15,8 @@ public class ExampleBean {
 
 	private ExampleRef ref;
 
+	private String refBean;
+
 	public ExampleBean() {}
 
 	@ConstructorProperties({"years", "ultimateAnswer"})
@@ -45,6 +47,14 @@ public class ExampleBean {
 
 	public void setRef(ExampleRef ref) {
 		this.ref = ref;
+	}
+
+	public String getRefBean() {
+		return refBean;
+	}
+
+	public void setRefBean(String refBean) {
+		this.refBean = refBean;
 	}
 
 	@Override
