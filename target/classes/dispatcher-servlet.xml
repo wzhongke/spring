@@ -2,8 +2,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd"
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+
+       default-init-method="init"
+       default-destroy-method="destroy"
 >
 
    <!-- 通常，每个XML配置文件都表示体系结构中的一个逻辑层或模块。 -->
@@ -30,7 +36,14 @@
         <constructor-arg name="years" value="7500"/>
         <constructor-arg name="ultimateAnswer" value="42"/>
     </bean>
-
+    <!-- 构造器实例简写，对于引用同p类似，比如 `c:bean-ref="targetBean"` -->
+    <bean id="exampleBean3c" class="examples.instantiating.ExampleBean"
+        c:years="7500" c:ultimateAnswer="42"
+    />
+    <!-- 对于少数情况（不包含调试信息的编译代码），不能够使用参数名 -->
+    <bean id="exampleBean3cw" class="examples.instantiating.ExampleBean"
+          c:_0="7500" c:_1="42"
+    />
 
     <!-- 静态工厂方法实例化 Bean -->
     <bean id="staticFactoryMethod" class="examples.instantiating.StaticFactoryMethod" factory-method="createInstance" />
@@ -51,13 +64,16 @@
           p:ultimateAnswer="45">
     </bean>
 
-    <bean id="targetBean" class="examples.instantiating.ExampleRef"/>
-
-    <bean id="exampleBean6" class="examples.instantiating.ExampleBean">
-        <property name="ref">
+    <bean id="exampleBean6" class="examples.instantiating.ExampleBean" autowire="byName">
+        <property name="refBean">
             <idref bean="targetBean" />
         </property>
     </bean>
+    <bean id="exampleBean6p" class="examples.instantiating.ExampleBean"
+          p:ref-ref="targetBean"/>
+
+    <bean id="targetBean" class="examples.instantiating.ExampleRef"/>
+
     <bean id="exampleBean7" class="examples.instantiating.ExampleBean">
         <property name="ref">
             <ref bean="targetBean"/>
@@ -71,35 +87,114 @@
         </property>
     </bean>
 
-    <!--<bean id="moreComplexObject" class="examples.instantiating.ComplexObject">-->
-        <!--&lt;!&ndash; results in a setAdminEmails(java.util.Properties) call &ndash;&gt;-->
-        <!--<property name="adminEmails">-->
-            <!--<props>-->
-                <!--<prop key="administrator">administrator@example.org</prop>-->
-                <!--<prop key="support">support@example.org</prop>-->
-                <!--<prop key="development">development@example.org</prop>-->
-            <!--</props>-->
-        <!--</property>-->
-        <!--&lt;!&ndash; results in a setSomeList(java.util.List) call &ndash;&gt;-->
-        <!--<property name="someList">-->
-            <!--<list>-->
-                <!--<value>a list element followed by a reference</value>-->
-                <!--<ref bean="" />-->
-            <!--</list>-->
-        <!--</property>-->
-        <!--&lt;!&ndash; results in a setSomeMap(java.util.Map) call &ndash;&gt;-->
-        <!--<property name="someMap">-->
-            <!--<map>-->
-                <!--<entry key="an entry" value="just some string"/>-->
-                <!--<entry key ="a ref" value-ref="myDataSource"/>-->
-            <!--</map>-->
-        <!--</property>-->
-        <!--&lt;!&ndash; results in a setSomeSet(java.util.Set) call &ndash;&gt;-->
-        <!--<property name="someSet">-->
-            <!--<set>-->
-                <!--<value>just some string</value>-->
-                <!--<ref bean="myDataSource" />-->
-            <!--</set>-->
-        <!--</property>-->
-    <!--</bean>-->
+    <!-- collections 集合类 -->
+    <bean id="moreComplexObject" class="examples.instantiating.ComplexObject">
+        <!-- results in a setAdminEmails(java.util.Properties) call -->
+        <property name="adminEmails">
+            <props>
+                <prop key="administrator">administrator@example.org</prop>
+                <prop key="support">support@example.org</prop>
+                <prop key="development">development@example.org</prop>
+            </props>
+        </property>
+        <!-- results in a setSomeList(java.util.List) call -->
+        <property name="someList">
+            <list>
+                <value>a list element followed by a reference</value>
+                <ref bean="exampleBean7" />
+            </list>
+        </property>
+        <!-- results in a setSomeMap(java.util.Map) call -->
+        <property name="someMap">
+            <map>
+                <entry key="an entry" value="just some string"/>
+                <entry key ="a ref" value-ref="exampleBean7"/>
+            </map>
+        </property>
+        <!-- results in a setSomeSet(java.util.Set) call -->
+        <property name="someSet">
+            <set>
+                <value>just some string</value>
+                <ref bean="exampleBean7" />
+            </set>
+        </property>
+        <property name="nullList">
+            <null/>
+        </property>
+    </bean>
+
+    <!-- 合并集合
+    child 的 adminEmails 中的元素为：
+        administrator=administrator@example.com
+        sales=sales@example.com
+        support=support@example.com
+    -->
+    <bean id="parent" abstract="true" class="examples.instantiating.ComplexObject">
+        <property name="adminEmails">
+            <props>
+                <prop key="administrator">adminstrator@example.com</prop>
+                <prop key="support">support@example.com</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="child" parent="parent">
+        <property name="adminEmails">
+            <!-- the merge is specified on the child collection definition -->
+            <props merge="true">
+                <prop key="sales">sales@example.com</prop>
+                <prop key="support">support@example.co.uk</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!--如果一个bean对于其他bean是有依赖的，但是这个依赖不能通过 `<ref/>` 等方式在配置中体现出来，那么可以使用 `depends-on` 属性来明确指定依赖 -->
+    <bean id="dependsObject" class="examples.instantiating.ComplexObject" depends-on="exampleBean5">
+        <property name="someSet">
+            <set>
+                <ref bean="exampleBean5" />
+            </set>
+        </property>
+    </bean>
+
+    <!-- look up method injection -->
+    <!-- a stateful bean deployed as a prototype (non-singleton) -->
+    <bean id="exampleBeanInject" class="examples.instantiating.ExampleBean" scope="prototype">
+        <property name="years" value="750000"/>
+        <property name="ultimateAnswer" value="44"/>
+    </bean>
+
+    <bean id="methodInjection" class="examples.instantiating.MethodInjectionWithLookup">
+        <lookup-method name="createExampleBean" bean="exampleBeanInject" />
+    </bean>
+
+    <!-- 使用代理的方式 -->
+    <!-- Scoped beans as dependencies -->
+    <!-- an HTTP prototype-scoped bean exposed as a proxy -->
+    <bean id="scopedBean" class="examples.instantiating.ExampleBean" scope="prototype">
+        <property name="years" value="750000"/>
+        <property name="ultimateAnswer" value="44"/>
+        <aop:scoped-proxy />
+    </bean>
+
+    <!-- a singleton-scoped bean injected with a proxy to the above bean -->
+    <bean id="proxy" class="examples.instantiating.ScopeProxy" scope="singleton">
+        <property name="bean" ref="scopedBean" />
+    </bean>
+
+    <!-- 自定义生命周期 -->
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="custom">
+                    <bean class="examples.scope.CustomScope"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="customScopeBean" class="examples.instantiating.ExampleBean" scope="custom" init-method="init"/>
+
+    <bean id="initBean" class="examples.instantiating.ExampleBean" init-method="init"/>
+    <bean id="destroyBean" class="examples.instantiating.ExampleBean" destroy-method="destroy"/>
 </beans>

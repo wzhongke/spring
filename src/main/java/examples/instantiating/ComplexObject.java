@@ -5,21 +5,26 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+/**
+ * @author wangzhongke
+ */
 public class ComplexObject {
 
     private Properties adminEmails;
 
-    private List<String> someList;
+    private List someList;
 
     private Map someMap;
 
     private Set someSet;
 
-    public List<String> getSomeList() {
+    private List nullList;
+
+    public List getSomeList() {
         return someList;
     }
 
-    public void setSomeList(List<String> someList) {
+    public void setSomeList(List someList) {
         this.someList = someList;
     }
 
@@ -45,5 +50,13 @@ public class ComplexObject {
 
     public void setAdminEmails(Properties adminEmails) {
         this.adminEmails = adminEmails;
+    }
+
+    public List getNullList() {
+        return nullList;
+    }
+
+    public void setNullList(List nullList) {
+        this.nullList = nullList;
     }
 }

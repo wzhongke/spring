@@ -186,6 +186,54 @@ XML 配置如下：
 内部bean没有必要定义id或者name属性，即使定义了，容器也会忽略它们。
 
 ## 集合 `Collections`
+一个map的key或者value，一个set的值，可以通过下列之一为其赋值：
+`bean ref idref list set map props value null`
+集合中使用的Javabean是：
+```java
+public class ComplexObject {
+
+    private Properties adminEmails;
+
+    private List someList;
+
+    private Map someMap;
+
+    private Set someSet;
+
+    private List nullList;
+}
+```
+
+如果没有类型限制，那么可以向集合中注入任意的类型。如果加上类型限制后，只能向集合中注入相应的类型。比如：`List<String> someList` 只能注入 `String` 类型的值。
+
+
+### 集合合并
+Spring支持集合的合并，一个集合可以定义一个`<list/>`, `<map/>`, `<set/>` 或者 `<props>`，然后子类可以通过继承来合并父类中的集合
+```xml
+<!-- 合并集合 -->
+<bean id="parent" abstract="true" class="examples.instantiating.ComplexObject">
+    <property name="adminEmails">
+        <props>
+            <prop key="administrator">adminstrator@example.com</prop>
+            <prop key="support">support@example.com</prop>
+        </props>
+    </property>
+</bean>
+<!-- child 的 adminEmails 中的元素为：
+    administrator=administrator@example.com
+    sales=sales@example.com
+    support=support@example.com
+-->
+<bean id="child" parent="parent">
+    <property name="adminEmails">
+        <!-- the merge is specified on the child collection definition -->
+        <props merge="true">
+            <prop key="sales">sales@example.com</prop>
+            <prop key="support">support@example.co.uk</prop>
+        </props>
+    </property>
+</bean>
+```
 
 ```xml
 <bean id="moreComplexObject" class="example.ComplexObject">
@@ -218,5 +266,115 @@ XML 配置如下：
             <ref bean="myDataSource" />
         </set>
     </property>
+    <!-- 注入 null -->
+    <property name="nullList">
+        <null/>
+    </property>
 </bean>
 ```
+
+### `depends-on` 属性
+如果一个bean对于其他bean是有依赖的，但是这个依赖不能通过 `<ref/>` 等方式在配置中体现出来，那么可以使用 `depends-on` 属性来明确指定依赖：
+```xml
+<bean id="dependsObject" class="examples.instantiating.ComplexObject" depends-on="exampleBean5">
+    <property name="someSet">
+        <set>
+            <ref bean="exampleBean5" />
+        </set>
+    </property>
+</bean>
+```
+
+### 懒初始化 bean
+默认情况下，容器会在初始化时创建所有的 `singleton` bean。可以通过使用`lazy-init="ture"` 来阻止容器在启动时初始化该bean，这时容器会在该bean第一次被请求时创建。
+
+### 自动注入 Autowiring
+Spring 容器可以自动注入引用的bean，有如下优点：
+- 自动注入可以很大程度上减少指定属性或者构造器参数
+- 当更新对象的引用时，不用修改配置
+
+使用XML配置时，可以通过指定 `<bean/>` 标签的 `autowire` 属性来定义自动注入模式，注入模式有如下 4 种：
+
+模式        | 说明
+:----------|:----------
+no         | (默认)不自动注入。bean的引用必须用`ref`定义。对于大型应用，建议使用默认值，因为这样能够更清晰和明确地指定对象的引用。
+byName     | 根据属性名注入，Spring为要注入的属性寻找与属性名相同的bean，然后将其注入。
+byType     | 容器中有且仅有一个bean的名字同属性名一致，才注入属性。如果多于1个，则会抛出异常并终止程序；如果没有匹配的bean，则不设置属性
+constructor| 与 `byType` 类似，只是它被用在构造参数上
+
+自动注入也有些限制：
+- 在`property` 和 `constructor-arg` 中明确指定依赖会覆盖自动注入的依赖。自动注入不能够注入基本类型、`String`类型和 `Classes`
+- 自动注入不如明确注入精确。
+- Spring容器生成的文档可能不会包含自动注入的信息
+- setter方法或者构造器参数可能会匹配到多个符合条件的bean，Spring容器会在这种情况下抛出异常。
+
+在Spring的XML中，设置`<bean />` 的 `autowire-candidate` 属性为 `false`，容器会将改bean在自动注入中不可用。
+
+### 方法注入
+容器中的大多数bean是 singletons 的。当一个 singleton 的bean 引用另一个 singleton 的bean，或者一个非 singleton 的bean 引用另一个非 singleton 的bean，可以将一个bean设置为另一个的属性。但是两个bean的生命周期不同时，就会有问题。假如一个 singleton 的bean A 需要使用一个非 singleton 的bean B，容器只会在初始化的时候创建一个A，并将B注入到A中，而不会每次使用A时，将一个新的B注入到A中。
+
+一个解决方案是放弃部分IoC，让A实现容器的 `ApplicationContextAware` 接口使得容器知道，每次A在调用B时，都会返回一个B的新的实例。
+```java
+public class MethodInjection implements ApplicationContextAware {
+
+	private ApplicationContext applicationContext;
+
+	public void process () {
+		ExampleBean bean = createExampleBean();
+		// do something
+	}
+
+	protected ExampleBean createExampleBean () {
+		// notice the Spring API dependency!
+		return this.applicationContext.getBean("exampleBean4", ExampleBean.class);
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+}
+```
+
+以上方式明显依赖了Spring容器中的类，我们还可以使用 Lookup 方法注入。Spring框架使用CGLIB库生成bytecode来动态生成覆盖了对应方法的子类来实现方法注入。使用该方法时，对应的bean不能是 `final`，覆盖的方法也不能是 `final` 的。
+该方式不能用在工厂方法中，`@Bean`方式也不会生效。
+
+```java
+public class MethodInjectionWithLookup {
+
+	public void process () {
+		ExampleBean bean = createExampleBean();
+		System.out.println(bean);
+		// do something
+	}
+
+    // 1. 使用xml注入
+	protected ExampleBean createExampleBean () {
+		// notice the Spring API dependency!
+		return null;
+	}
+
+    // 2. 使用 Lookup 注解
+	@Lookup("exampleBeanInject")
+	protected ExampleBean createExampleBean1 () {
+		// notice the Spring API dependency!
+		return null;
+	}
+}
+```
+
+使用方式如下：
+```xml
+<bean id="exampleBeanInject" class="examples.instantiating.ExampleBean" scope="prototype">
+    <property name="years" value="750000"/>
+    <property name="ultimateAnswer" value="44"/>
+</bean>
+
+<bean id="methodInjection" class="examples.instantiating.MethodInjectionWithLookup">
+    <lookup-method name="createExampleBean" bean="exampleBeanInject" />
+</bean>
+```
+
+还使用lookup method injection 实现将容器管理的bean的任意方法替换为另一个方法。详见Spring的[说明文档](https://docs.spring.io/spring/docs/5.0.2.RELEASE/spring-framework-reference/core.html#beans-factory-arbitrary-method-replacement)
+
+## Bean 生命周期

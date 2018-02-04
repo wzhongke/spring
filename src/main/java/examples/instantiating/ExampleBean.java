@@ -1,5 +1,7 @@
 package examples.instantiating;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.beans.ConstructorProperties;
 
 /**
@@ -23,6 +25,18 @@ public class ExampleBean {
 	public ExampleBean(int years, String ultimateAnswer) {
 		this.years = years;
 		this.ultimateAnswer = ultimateAnswer;
+	}
+
+	@PostConstruct
+	public void init() {
+		// do some initialization work
+		System.out.println("init " + this);
+	}
+
+	@PreDestroy
+	public void destroy() {
+		// do some initialization work
+		System.out.printf("destroy " + this);
 	}
 
 	public int getYears() {
@@ -59,7 +73,7 @@ public class ExampleBean {
 
 	@Override
 	public String toString() {
-		return "ExampleBean{" +
+		return super.toString() + " ExampleBean{" +
 			"years=" + years +
 			", ultimateAnswer='" + ultimateAnswer + '\'' +
 			'}';
