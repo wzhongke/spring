@@ -197,4 +197,6 @@
 
     <bean id="initBean" class="examples.instantiating.ExampleBean" init-method="init"/>
     <bean id="destroyBean" class="examples.instantiating.ExampleBean" destroy-method="destroy"/>
+
+    <bean name="beanAware1 beanAware2" class="examples.aware.BeanApplicationContextAware" />
 </beans>
