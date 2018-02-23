@@ -10,6 +10,17 @@
 
     <context:property-placeholder location="/jdbc.properties"/>
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <!-- 加载properties文件 -->
+        <property name="locations">
+            <value>classpath:jdbc.properties</value>
+        </property>
+        <!-- 增加property -->
+        <property name="properties">
+            <value>custom.strategy.name=default</value>
+        </property>
+    </bean>
+
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="c3p0DataSource"/>
     </bean>

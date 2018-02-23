@@ -78,4 +78,27 @@ public class ExampleBean {
 			", ultimateAnswer='" + ultimateAnswer + '\'' +
 			'}';
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ExampleBean that = (ExampleBean) o;
+
+		if (years != that.years) return false;
+		if (ultimateAnswer != null ? !ultimateAnswer.equals(that.ultimateAnswer) : that.ultimateAnswer != null)
+			return false;
+		if (ref != null ? !ref.equals(that.ref) : that.ref != null) return false;
+		return refBean != null ? refBean.equals(that.refBean) : that.refBean == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = years;
+		result = 31 * result + (ultimateAnswer != null ? ultimateAnswer.hashCode() : 0);
+		result = 31 * result + (ref != null ? ref.hashCode() : 0);
+		result = 31 * result + (refBean != null ? refBean.hashCode() : 0);
+		return result;
+	}
 }
