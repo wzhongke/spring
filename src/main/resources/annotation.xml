@@ -13,6 +13,7 @@
 
     <!-- <context:annotation-config/> 只会取当前应用上下文中的注解的bean，如果在`WebApplicationContext`，那么只会取controller中的`@Autowired`，而不会管service中的 -->
     <context:annotation-config/>
+    <context:component-scan base-package="examples.component" name-generator="examples.component.NameGenerator"/>
 
     <!-- @Autowired 注解如果有多个匹配的类型，可以使用primary来注入该bean -->
     <bean class="examples.instantiating.ExampleBean" primary="true">

@@ -1,5 +1,8 @@
 package examples.instantiating;
 
+/**
+ * @author wangzhongke
+ */
 public class ScopeProxy {
 
 	private ExampleBean bean;
