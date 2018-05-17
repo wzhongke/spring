@@ -1,0 +1,8 @@
+examples\instantiating\ScopeProxyTest.class
+other\OtherTest.class
+examples\instantiating\MethodInjectionTest.class
+configuration\PropertiesConfigTest.class
+examples\instantiating\AwareTest.class
+examples\instantiating\ExampleBeanTest.class
+examples\instantiating\ComplexObjectTest.class
+annotation\AnnotationTest.class

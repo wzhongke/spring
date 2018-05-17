@@ -207,10 +207,7 @@ public class AhoCorasickAutomation {
 		AhoCorasickAutomation aca = new AhoCorasickAutomation(target);
 
 		String text = "饲料稀疏rss临 - 搜狗百科 人民报消息,de pers的消息,新鹿特丹商业报”parool新闻,玻璃,nrc的下一则新闻,荷兰语日报,widgetboards,德宏声,noorden新闻日报“国家报”新闻 ...";
-		SubWordList subWordList =new SubWordList();
-		subWordList = subWordList.loadSubWordFile("D://xshell//secadmin_output1_new.dat.agent");
 		long begin = System.currentTimeMillis();
-		System.out.println(subWordList.check(new String[] {text}));
 		System.out.println(System.currentTimeMillis() - begin);
 
 		begin = System.currentTimeMillis();

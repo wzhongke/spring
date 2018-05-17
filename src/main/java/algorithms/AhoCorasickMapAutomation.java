@@ -1,8 +1,6 @@
 package algorithms;
 
 
-import com.SizeOfAgent;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -214,13 +212,13 @@ public class AhoCorasickMapAutomation {
 	public static void main(String[] args) throws IOException {
 		List<BlacklistEntry> target = new ArrayList<>();
 
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("D://xshell//secadmin_output1_new.dat.agent"),"GBK"))) {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("E:/git/spring/web_front_blacklist_new_new.agent"),"GBK"))) {
 			String line = "";
 			while ((line = reader.readLine()) != null) {
 				String[] ls = line.split("\t");
 				BlacklistEntry entry = new BlacklistEntry();
-				entry.id  = ls[0];
-				entry.key = ls[1];
+				entry.id  = ls[5];
+				entry.key = ls[0];
 				entry.keys = entry.key.split("\ue40a");
 				entry.multiNum = entry.keys.length;
 				target.add(entry);
@@ -230,7 +228,7 @@ public class AhoCorasickMapAutomation {
 		}
 		long begin = System.currentTimeMillis();
 		AhoCorasickMapAutomation aca = new AhoCorasickMapAutomation(target);
-		System.out.println(SizeOfAgent.fullSizeOf(aca));
+//		System.out.println(SizeOfAgent.fullSizeOf(aca));
 //		SubWordList subWordList =new SubWordList();
 //		subWordList = subWordList.loadSubWordFile("D://xshell//secadmin_output1_new.dat.agent");
 

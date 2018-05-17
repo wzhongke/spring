@@ -13,12 +13,5 @@ public class ControllerExceptionHandler {
 		fa.printStackTrace();
 		return "{'success': 'false', 'cause' : '" + fa + "'}";
 	}
-
-	@ExceptionHandler(Exception.class)
-	@ResponseBody
-	public String commonException (Exception e) {
-		e.printStackTrace();
-		return "{'success': 'false', 'cause' : '" + e + "'}";
-	}
 }
 

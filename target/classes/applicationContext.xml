@@ -7,8 +7,7 @@
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
     ">
 
-
-    <context:property-placeholder location="/jdbc.properties"/>
+    <context:property-placeholder location="classpath:jdbc.properties"/>
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <!-- 加载properties文件 -->
@@ -21,35 +20,35 @@
         </property>
     </bean>
 
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="c3p0DataSource"/>
-    </bean>
+    <!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
+        <!--<property name="dataSource" ref="c3p0DataSource"/>-->
+    <!--</bean>-->
 
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="c3p0DataSource"/>
-        <property name="configLocation" value="/hibernate.cfg.xml"/>
-        <property name="implicitNamingStrategy">
-            <bean class="hibernate.domain.namestrategy.UmisImplicitNamingStrategy"/>
-        </property>
-        <property name="physicalNamingStrategy">
-            <bean class="hibernate.domain.namestrategy.UmisPhysicalNamingStrategy"/>
-        </property>
-    </bean>
+    <!--<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">-->
+        <!--<property name="dataSource" ref="c3p0DataSource"/>-->
+        <!--<property name="configLocation" value="/hibernate.cfg.xml"/>-->
+        <!--<property name="implicitNamingStrategy">-->
+            <!--<bean class="hibernate.domain.namestrategy.UmisImplicitNamingStrategy"/>-->
+        <!--</property>-->
+        <!--<property name="physicalNamingStrategy">-->
+            <!--<bean class="hibernate.domain.namestrategy.UmisPhysicalNamingStrategy"/>-->
+        <!--</property>-->
+    <!--</bean>-->
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${jdbc.driverClassName}"/>
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>
-    </bean>
+    <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+        <!--<property name="driverClassName" value="${jdbc.driverClassName}"/>-->
+        <!--<property name="url" value="${jdbc.url}"/>-->
+        <!--<property name="username" value="${jdbc.username}"/>-->
+        <!--<property name="password" value="${jdbc.password}"/>-->
+    <!--</bean>-->
 
 
-    <bean id="dataSourceP" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-          p:driverClassName="com.mysql.jdbc.Driver"
-          p:url="${jdbc.url}"
-          p:username="${jdbc.username}"
-          p:password="${jdbc.password}"
-    />
+    <!--<bean id="dataSourceP" class="org.springframework.jdbc.datasource.DriverManagerDataSource"-->
+          <!--p:driverClassName="com.mysql.jdbc.Driver"-->
+          <!--p:url="${jdbc.url}"-->
+          <!--p:username="${jdbc.username}"-->
+          <!--p:password="${jdbc.password}"-->
+    <!--/>-->
 
 
 </beans>

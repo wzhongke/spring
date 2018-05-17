@@ -22,7 +22,7 @@ Spring中Bean的定义使用接口 `BeanDefinition` 表示的，它具有如下�
 有时候需要为其他地方定义的bean引入一个别名。 通常，在大型系统中每个子系统都有自己的一组对象定义，需要使用别名。可使用如下方式引入别名：
 ```xml
 <!-- fromName 是其他Bean定义中的名字， toName 是在本定义中的名字 -->
-<alias name="fromName" alias="toName">
+<alias name="fromName" alias="toName"/>
 ```
 
 如果要定义一个内部静态类的 Bean，需要用 `$` 符号分隔类和内部类： `com.example.Foo$Bar`
