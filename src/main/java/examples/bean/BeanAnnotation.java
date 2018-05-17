@@ -1,6 +1,7 @@
 package examples.bean;
 
 import examples.instantiating.ExampleBean;
+import examples.instantiating.ExampleRef;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.*;
@@ -37,6 +38,21 @@ public class BeanAnnotation {
 	public ExampleBean getExampleBeanScope () {
 		return getExampleBean();
 	}
+
+	@Bean
+	@Qualifier("targetBeanJava")
+	public ExampleRef getExampleRef () {
+		return new ExampleRef();
+	}
+
+	@Bean
+	@Qualifier("exampleBeanJava3")
+	public ExampleBean getExampleBean3 () {
+		ExampleBean bean = new ExampleBean();
+		bean.setRef(getExampleRef());
+		return bean;
+	}
+
 
 	@Bean
 	@ConditionalOnMissingBean(InternalResourceViewResolver.class)

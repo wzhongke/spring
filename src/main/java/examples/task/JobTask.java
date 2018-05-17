@@ -46,8 +46,20 @@ public class JobTask {
 
 	 */
 
-	@Scheduled(cron="00 00 12 * * ?")   // 每天的凌晨执行
-	public void task() throws Exception {
-
+	/**
+	 * Seconds:可出现", - * /"四个字符，有效范围为0-59的整数
+		 Minutes:可出现", - * /"四个字符，有效范围为0-59的整数
+		 Hours:可出现", - * /"四个字符，有效范围为0-23的整数
+		 DayofMonth:可出现", - * / ? L W C"八个字符，有效范围为0-31的整数
+		 Month:可出现", - * /"四个字符，有效范围为1-12的整数或JAN-DEc
+		 DayofWeek:可出现", - * / ? L C #"四个字符，有效范围为1-7的整数或SUN-SAT两个范围。1表示星期天，2表示星期一， 依次类推
+		 Year:可出现", - * /"四个字符，有效范围为1970-2099年
+	 */
+	/**
+	 * 每天的凌晨执行
+	 */
+	@Scheduled(cron="00 00 12 * * ?")
+	public void task() {
+		System.out.println("execute task");
 	}
 }
