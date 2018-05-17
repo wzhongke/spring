@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
 public class BeanApplicationContextAware implements ApplicationContextAware, BeanNameAware, ApplicationEventPublisherAware {
 
 	private String name;
+	private ApplicationContext context;
 
 	private ApplicationContext context;
 
