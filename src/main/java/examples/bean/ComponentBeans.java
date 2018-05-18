@@ -1,4 +1,4 @@
-package examples.component;
+package examples.bean;
 
 import examples.instantiating.ExampleBean;
 import org.springframework.beans.factory.annotation.Qualifier;

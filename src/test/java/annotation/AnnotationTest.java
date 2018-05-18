@@ -1,7 +1,6 @@
 package annotation;
 
 import examples.annotation.Annotation;
-import examples.component.ComponentBeans;
 import examples.component.MyService;
 import examples.instantiating.ExampleBean;
 import org.junit.Test;

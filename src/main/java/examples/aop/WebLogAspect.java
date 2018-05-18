@@ -30,7 +30,7 @@ public class WebLogAspect {
 	 * ~ .. 匹配任意数量的参数.
 	 */
 
-	@Pointcut("execution(public * com.sogou.http.controller..*(..))")
+	@Pointcut("execution(public * examples.controller..*(..))")
 	public void webLog() {}
 
 	@Before("webLog()")

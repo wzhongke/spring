@@ -31,7 +31,7 @@
   };
 
   /**
-   * Updates configuration.
+   * Updates bean.
    *
    *     NProgress.configure({
    *       minimum: 0.1
