@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Vue Computed Property</title>
+	<script type="text/javascript" src="https://unpkg.com/vue"></script>
+	<script type="text/javascript" src="../../static/js/accounting.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.js"></script>
+	<style type="text/css">
+		.ascending:after {
+			content: "25B2"
+		}
+		.descending:after {
+			content: "25BC"
+		}
+		.price {
+			text-align: right
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<input type="text" v-model="name">
+		<input type="text" id="surname" value="Snow">
+		<button @click="saveSurname">Save Surname</button>
+		<output>{{computedFullName}}</output>
+	</div>
+	<script type="text/javascript">
+		// 在`data`外面声明的变量，不是reactive变量
+		let surname = 'Snow'
+		new Vue({
+			el: '#app',
+			data: {
+				name: 'John'
+			},
+			computed: {
+				computedFullName() {
+					return this.name + ' ' + surname
+				}
+			},
+			methods: {
+				saveSurname() {
+					surname = this.$el.querySelector('#surname').value
+				}
+			}
+		})
+	</script>
+
+	<!-- computed中的方法会缓存计算结果 -->
+	<div id="app2">
+		<label><input type="range" v-model="legCount"></label><br>
+		<label for=""><input @input="update"  :value="tableCount"></label><br>
+		<output>
+			We are going to build {{legCount}} legs
+			and assembly {{tableCount}} tables.
+		</output>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: '#app2',
+			data: {legCount: 0},
+			computed: {
+				tableCount: {
+					get() {
+						return this.legCount / 4
+					},
+					set (newValue) {
+						this.legCount = newValue * 4
+					}
+				}
+			},
+			methods: {
+				// 绑定事件方法应该写到methods中
+				update (e) {
+					this.tableCount = e.target.value
+				}
+			}
+		})
+	</script>
+
+	<!-- 使用计算属性来过滤 list -->
+	<div id="app3">
+		<h3>List of expensive experiments</h3>
+		<ul>
+		    <!-- 使用计算属性 -->
+			<li v-for="exp in nonPhysics">
+			{{exp.name}} ({{exp.cost}}m )
+			</li><br>
+			<!--  结合多个过滤器 -->
+			<li v-for="exp in nonPhysicsL(lowCost(experiments))">
+				{{exp.name}} ({{exp.cost}}m)
+			</li><br>
+			<li v-for="exp in filteredExperiments">
+				{{exp.name}} ({{exp.cost}}m)
+			</li>
+		</ul>
+	</div>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el: '#app3',
+			// 计算属性需要无参数
+			computed: {
+				// 过滤掉 Physis
+				nonPhysics() {
+					return this.experiments.filter(exp => exp.field != 'Physics')
+				},
+				filteredExperiments () {
+					return this.lowCost(this.nonPhysicsL(this.experiments))
+				}
+			},
+			// 方法可以传递参数
+			methods: {
+				// 使用结合过滤器时，需要传递参数
+				nonPhysicsL (list) {
+					return list.filter(exp => exp.field !== 'Physics')
+				},
+				lowCost (list) {
+					return list.filter(exp => exp.cost <= 3)
+				},
+			},
+			data: {
+				experiments: [
+					{name: 'RHIC Ion Collider', cost: 650, field: 'Physics'},
+					{name: 'Neptune Undersea Observatory', cost: 100, field: 'Biology'},
+					{name: 'Violinist in the Metro', cost: 3, field: 'Psychology'},
+					{name: 'Large Hadron Collider', cost: 7700, field: 'Physics'},
+					{name: 'DIY Particle Detector', cost: 0, field: 'Physics'}
+				]
+			}
+		})
+	</script>
+
+	<!-- 使用计算属性，对数组进行排序 -->
+	<div id="app4">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Country</th>
+					<th v-bind:class="order === 1 ? 'descending': 'ascending'" @click="sort">Electricity</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="dam in damsByElectricity">
+					<td>{{dam.name}}</td>
+					<td>{{dam.country}}</td>
+					<!-- 使用过滤器 currency，需要在Vue中使用 Vue.filter注册 -->
+					<td class="price">{{dam.electricity | currency}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<script type="text/javascript">
+		// 注册过滤器，需要在使用的js代码之前注册
+		Vue.filter('currency', function (money) {
+			return accounting.formatMoney(money)
+		})
+		new Vue({
+			el: '#app4',
+			data: {
+				dams: [
+					{name: 'Nurek Dam', country: 'Tajikistan', electricity: 3200},
+					{name: 'Three Gorges Dam', country: 'China', electricity: 22500},
+					{name: 'Tarbela Dam', country: 'Pakistan', electricity: 3500},
+					{name: 'Guri Dam', country: 'Venezuela', electricity: 10200}
+				],
+				order: 1
+			},
+			computed: {
+				damsByElectricity() {
+					return this.dams.sort((d1, d2) => (d2.electricity - d1.electricity) * this.order)
+				}
+			},
+			methods:{
+				sort() {
+					this.order = this.order * -1
+				}
+			}
+		})
+	</script>
+	<!-- 向filter中传递参数 -->
+	<div id="app5">
+		The Storming of the Bastille, happened on {{bastilleStormingDate |
+date('fr')}}
+	</div>
+	<script type="text/javascript">
+		// 接收参数的filter
+		Vue.filter("date", function(date, locale) {
+			moment.locale(locale)
+			return moment(date).format('LL')
+		})
+		new Vue({
+			el:'#app5',
+			data: {
+				bastilleStormingDate: '1789-07-14 17 h'
+			}
+		})
+	</script>
+</body>
+</html>

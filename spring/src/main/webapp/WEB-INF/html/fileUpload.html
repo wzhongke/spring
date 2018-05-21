@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+	<style>
+		body{
+			font-family: Monaco, monospace
+		}
+		textarea {
+			font-family: Monaco, monospace;
+			font-size: 14px;
+		}
+		button {
+			margin: 10px;
+			padding: 13px;
+			line-height: 14px;
+			font-size: 14px;
+		}
+	</style>
+</head>
+<body>
+<div id="output"></div>
+<div id="files_list" style="height: 200px; width: 200px; border:1px dashed #ccc"></div>
+<button id="uploadFile">上传</button>
+<script src="/static/js/requirejs.js" data-main="/static/js/main"></script>
+
+    <span style="color:red;">${msg}</span>
+    <form action="/test/sh" method="post">
+        <label for="sh">sh: </label>
+        <textarea id="sh" name="sh" rows="5" cols="100"></textarea><br>
+        <button type="submit">submit</button>
+    </form>
+
+</body>
+</html>

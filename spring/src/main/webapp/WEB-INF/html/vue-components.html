@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.0/vue.js"></script>
+	<!-- vuex -->
+	<script type="text/javascript" src="https://unpkg.com/vuex"></script>
+	<title>vue components</title>
+</head>
+<body>
+<!--
+	props: 可以从外部的环境将数据传递到组件中
+	events: 允许组件触发外部的事件
+	slots: 它们允许外部环境组成组件的内容
+
+-->
+
+<!-- `template`方法在展示数据的时候使用，`render`函数在我们想要通过程序控制展示的时候使用 -->
+	<div id="app">
+		<thanks gift="Batman" decoration="strong"></thanks>
+	</div>
+	<script type="text/javascript">
+		// 使用 render function 注册组件
+		Vue.component('thanks', {
+			// 标志为函数式的，表明该组件中不能包含任何数据
+			// 简单来说，就是 通过传递的参数来输出结果
+			// `render`函数在组件被画到屏幕上时被调用
+			// `createElement`的语法如下：
+			// createElement(
+			// 	// {String | Object | Function}
+			// 	'div', // in this case a string
+			// 	{
+			// 		'class': ...
+			// 		style: ...
+			// 		attrs: ...
+			// 		props: ...
+			// 		domProps: ...
+			// 		on: {
+			// 			click: ...
+			// 			input: ...
+			// 			...
+			// 		},
+			// 		nativeOn: {
+			// 			input: ...
+			// 			...
+			// 		},
+			// 		directives: ...
+			// 		slot: ...
+			// 		key: ...
+			// 		ref: ...
+			// 	},
+			// 	[... an array of children ... ]
+			// )
+
+
+			functional: true,
+			render: function(createElement, context) {
+				let decoratedGift = createElement(context.props.decoration, context.props.gift)
+				return createElement(
+					'p', 
+					{class: 'word'},
+					['Dear John, thanks for ', decoratedGift]
+					)
+			},
+			props: {
+				gift: String,
+				decoration: String
+			}
+		})
+		new Vue({
+			el: '#app'
+		})
+	</script>
+	
+	<div id="app2">
+		<light-bulb></light-bulb>
+		<light-bulb></light-bulb>
+		<light-bulb></light-bulb>
+	</div>
+	<script type="text/javascript">
+		// 创建一个组件: `Vue.component('name-of-component', { ... options ... })`
+		// 因为HTML是大小写不敏感的，所以Vue会将驼峰式CamelCase的命名转换为kebab-case.
+		// 全局注册组件
+		Vue.component('light-bulb', {
+			template: `
+				<div class='light-bulb'>
+					<p> Eureka! </p>
+				</div>
+				`
+		})
+		new Vue({el:'#app2'})
+
+		// 本地注册，使用时通过 `components`导入组件，这样组件就有完全分离的问题
+		var ligthBulb = {
+			template: `
+				<div class='light-bulb'>
+					<p> Eureka! </p>
+				</div>
+				`
+		}
+
+		new Vue({
+			el: '#app2',
+			components: {
+				'light-bulb': ligthBulb
+			}
+		})
+	</script>
+
+	<!-- 通过 `props` 向组件中传递参数 -->
+	<div id="app3">  <!-- 父组件 -->
+		<label>Sound level</label>
+		<input type="number" v-model.number="soundLevel">
+		<!-- 如果 `level`前没有冒号，则表示将后边的字符串作为prop的不可改变的值-->
+		<!-- 因为HTML是大小写不敏感的，js中用驼峰式定义的话，:level 要使用 kebab-case，否则可能会无效 -->
+		<!-- 子组件 -->
+		<sound-icon :level="soundLevel" :olevel="soundLevel"></sound-icon>
+	</div>
+	<script type="text/javascript">
+		function MyObject(){}
+		Vue.component('sound-icon', {
+			template: "<span>{{soundEmojis[level]}}</span>",
+			// props 是一个单项通信属性，向组件中传递参数
+			// props: ['soundLevel'],
+			props: {
+				// 限定level的类型
+				level: [Number, String],
+				olevel: {
+					type: Number,  // 可以设置成自定义类型
+					required: true,
+					default: 0,                // 设置默认值
+					validator(value) {         // 通过类型检测后，需要通过该过滤器
+						return value >= 0 && value <=3
+					}
+				}
+			},
+			// data是一个函数，如果是一个对象，那么多个子对象将会共享这个data对象
+			data () {
+				return {
+					soundEmojis: ['🔈','🔈','🔉','🔊']
+				}
+			}
+		})
+		new Vue({
+			el: '#app3',
+			data: {
+				soundLevel: 0
+			}
+		})
+	</script>
+
+	<!-- 组件间通信 -->
+	<div id="app4">
+		<blabber></blabber>
+		<blabber></blabber>
+	</div>
+	<script type="text/javascript">
+	// 通过全局变量的方式，组件间通信，不推荐这种方式
+		// var line = 0
+		Vue.component('blabber', {
+			template: "<p>{{dialogue[currentLine]}}</p>",
+			data () {
+				return {
+					currentLine: 0,
+					dialogue: [
+						'hello',
+						'how are you?',
+						'fine thanks',
+						'let\'s go drink!',
+						'alright, where?',
+						'to hello\'s bar',
+						'hello?'
+					]
+				}
+			},
+			// hook 函数，组件被挂载之后，执行
+			mounted () {
+				// setInterval(()=>{
+				// 	this.currentLine = line % this.dialogue.length
+				// 	line += 1
+				// }, 2000)
+			}
+		})
+		new Vue({el:'#app4'})
+	</script>
+
+	<!-- 使用事件来实现组件间通信 -->
+	<div id="app5">
+		<blabber2 :ice-breaker="true"></blabber2>
+		<blabber2></blabber2>
+	</div>
+	<script type="text/javascript">
+	// 新建一个Vue实例来进行组件间通信
+		var bus = new Vue()
+		Vue.component('blabber2', {
+			template: "<p>{{dialogue[currentLine]}}</p>",
+			props: {
+				iceBreaker: {
+					type: Boolean,
+					default: false
+				}
+			},
+			data () {
+				return {
+					currentLine: this.iceBreaker ? 0: -1,
+					dialogue: [
+						'hello',
+						'how are you?',
+						'fine thanks',
+						'let\'s go drink!',
+						'alright, where?',
+						'to hello\'s bar',
+						'hello?'
+					]
+				}
+			},
+			created() {
+				bus.$on('line', line => {
+					if (line != this.currentLine) { // 确保不是本组件发送的line信息
+						setTimeout(()=>{
+							this.currentLine = (line + 1) % this.dialogue.length
+							bus.$emit('line', this.currentLine)
+						}, 2000)
+					}
+				})
+			},
+			mounted () {
+				if (this.iceBreaker) {
+					bus.$emit('line', 0)
+				}
+			}
+		})
+		new Vue({el:'#app5'})
+	</script>
+
+	<!-- 使用Vuex进行通信 -->
+	<style type="text/css">
+		.blabber {
+			width: 200px;
+			height: 40px;
+			background-color: gainsboro;
+			border: 1px solid grey;
+		}
+	</style>
+	<div id="app6">
+		<blabber-store></blabber-store>
+		<blabber-store></blabber-store>
+		<blabber-store></blabber-store>
+	</div>
+	<script type="text/javascript">
+		const store = new Vuex.Store({
+			strict: true, // 每次更新状态后，都会在log中显示
+			state: {
+				currentActor: -1,
+				currentLine: -1,
+				actors: [],
+				dialogue: [
+					'Where are you going?',
+					'To the cinema',
+					'What\'s on at the cinema?',
+					'\'Quo vadis?\'',
+					'Oh, what does it mean?'
+				]
+			},
+			mutations: {
+				entersScene (state, uuid) {
+					state.currentLine = (state.currentLine + 1) % state.dialogue.length
+					state.actors.push({
+						uuid,
+						line: state.dialogue[state.currentLine]
+					})
+					state.currentActor = (state.currentActor + 1) % state.actors.length
+				},
+				nextLine (state) {
+					state.currentActor = (state.currentActor + 1) % state.actors.length
+					state.currentLine =	(state.currentLine + 1) % state.dialogue.length
+					state.actors[state.currentActor].line =	state.dialogue[state.currentLine]
+				}
+			}
+		})
+		Vue.component('blabber-store', {
+			template: '<div class="blabber">{{currentLine}}</div>',
+			data () {
+				return {
+					uuid: Math.random()
+				}
+			},
+			computed: {
+				currentLine () {
+					return store.state.actors.find(actor => actor.uuid === this.uuid).line
+				}
+			},
+			created () {
+				store.commit('entersScene', this.uuid)
+			}
+		})
+		new Vue({
+			el: '#app6',
+			mounted () {
+				setInterval(() => {
+					store.commit('nextLine')
+				}, 2000)
+			}
+		})
+	</script>
+
+	<!-- 直接读取子组件的状态 ： 适合于紧耦合组件 -->
+	<div id="app7">
+	    <!-- 可以通过 `ref` 属性获取组件的标记，该值不是reactive，所以不能将其绑定到变量上 -->
+		<child ref="junior"></child>
+		<p> Truth: {{childStomach}} </p>
+	</div>
+	<script type="text/javascript">
+		Vue.component('child', {
+			template: "<p>{{mouth}}</p>",
+			data () {
+				return {
+					mouth: 'I didn\'t eat that cookie',
+					stomach: 'Yummy that cookie was delicious.'
+				}
+			}
+		})
+
+		new Vue({
+			el: '#app7',
+			data: {
+				childStomach: 'unknown'
+			},
+			mounted () {
+				this.childStomach = this.$refs.junior.stomach
+			}
+		})
+	</script>
+</body>
+</html>

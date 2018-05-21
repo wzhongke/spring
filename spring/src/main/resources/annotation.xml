@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd"
+
+       default-init-method="init"
+       default-destroy-method="destroy"
+>
+
+    <!-- <context:annotation-config/> 只会取当前应用上下文中的注解的bean，如果在`WebApplicationContext`，那么只会取controller中的`@Autowired`，而不会管service中的 -->
+    <context:annotation-config/>
+    <context:component-scan base-package="examples.component" name-generator="examples.component.NameGenerator"/>
+
+    <!-- @Autowired 注解如果有多个匹配的类型，可以使用primary来注入该bean -->
+    <bean class="examples.instantiating.ExampleBean" primary="true">
+        <constructor-arg type="int" value="75000"/>
+        <constructor-arg type="java.lang.String" value="42" />
+    </bean>
+
+    <bean class="examples.instantiating.ExampleBean" id="no-primary" name="noPrimary">
+        <constructor-arg type="int" value="25000"/>
+        <constructor-arg type="java.lang.String" value="42" />
+    </bean>
+
+    <bean class="examples.annotation.Annotation" />
+</beans>

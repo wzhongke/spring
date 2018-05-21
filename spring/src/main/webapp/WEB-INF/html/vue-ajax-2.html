@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vue ajax 2</title>
+	<script type="text/javascript" src="https://unpkg.com/vue"></script>
+	<script type="text/javascript" src="https://unpkg.com/axios@0.16.2/dist/axios.js"></script>
+</head>
+<body>
+<div id="app1">
+	<h2>Advice of the day</h2>
+	<p>{{advice}}</p>
+</div>
+<script type="text/javascript">
+	new Vue({
+		el: '#app1',
+		data: {
+			advice: 'loading...'
+		},
+		created() {
+			axios.get('http://api.adviceslip.com/advice')
+				.then(response => {
+					this.advice = response.data.slip.advice
+				})
+				.catch(error => {
+					this.advice = 'There was an error: ' + error.message
+				})
+		}
+	})
+</script>
+
+<div id="app2">
+	<form @submit.prevent="vueSubmit">
+		<div>
+		<label>Name</label><input type="text" required="true">
+		</div>
+		<div><label>Email</label><input type="email" required="true"></div>
+		<div><label>Submit</label><button type="submit">Submit</button></div>
+	</form>
+</div>
+<script type="text/javascript">
+	new Vue({
+		el: '#app2',
+		methods: {
+			vueSubmit() {
+				console.log('fake Ajax request')
+			}
+		}
+	})
+</script>
+
+<div id="app3">
+	<h3>Write a new post</h3>
+	<form>
+		<div>
+		<label>Title of your post:</label>
+		<input type="text" v-model="title">
+		</div>
+	<div>
+		<label>Write your thoughts for the day</label>
+		<textarea v-model="body"></textarea>
+		</div>
+	<div>
+		<button @click.prevent="submit">Submit</button>
+	</div>
+	<h3>Response from the server</h3>
+	<pre>{{response}}</pre>
+	</form>
+</div>
+<script type="text/javascript">
+	new Vue({
+		el: '#app3',
+		data: {
+			userId: 1,
+			title: '',
+			body: '',
+			response:''
+		},
+		methods: {
+			submit () {
+				axios.post('http://jsonplaceholder.typicode.com/posts', {
+					title: this.title,
+					body: this.body,
+					userId: this.userId
+				}).then(response => {
+					this.response = JSON.stringify(response,null,' ')
+				}).catch(error => {
+					this.response = 'Error: ' + error.response.status
+				})
+			}
+		}
+	})
+</script>
+
+<style type="text/css">
+	@keyframes spin {
+		100% {transform:rotate(360deg);}
+	}
+	.spinner {
+		width: 1em;
+		height: 1em;
+		padding-bottom: 12px;
+		display: inline-block;
+		animation: spin 2s linear infinite;
+	}
+</style>
+
+<!-- 超时多次请求 -->
+<div id="app4">
+	<h3>Everest pizza delivery</h3>
+	<button @click="order" :disabled="inProgress">Order pizza!</button>
+	<span class="spinner" v-show="inProgress">pizza</span>
+	<h4>Pizza wanted</h4>
+	<p>{{requests}}</p>
+	<h4>Pizzas ordered</h4>
+	<span v-for="pizza in responses">{{pizza.id}}:{{pizza.req}}</span>
+</div>
+<script type="text/javascript">
+	new Vue({
+		el: '#app4',
+		data: {
+			inProgress: false,
+			requests: new Object(null),
+			responses: new Object(null),
+			counter: 0,
+			impatientAxios: undefined
+		},
+		created() {
+			this.impatientAxios = axios.create({
+				timeout: 3000
+			})
+		},
+		methods: {
+			order(event, oldRequest) {
+				let request = undefined
+				if (oldRequest) {
+					request = oldRequest
+				} else {
+					request = {req : 'pizza', id: this.counter++}
+				}
+				this.inProgress = true
+				this.requests[request.id] = request
+				this.impatientAxios.get('http://httpstat.us/200')
+					.then( response => {
+						this.inProgress = false
+						this.responses[request.id] = this.requests[request.id]
+						delete this.requests[request.id]
+					})
+					.catch(e=>{
+						this.inProgress = false
+						console.log(e.message)
+						console.error(this.requests.s)
+						setTimeout(this.order(event, request), 1000)
+					})
+			}
+		}
+	})
+
+
+</script>
+
+<div id="app5">
+		<h3>Sticky message</h3>
+		<ol>
+			<li v-for="message in messages">
+				<button @click="deleteItem(message._id)">Delete</button>
+				<button @click="edit(message._id, message.text)">edit</button>
+				<input v-model="message.text">
+			</li>
+		</ol>
+		<input v-model="toAdd">
+		<button @click="add">Add</button>
+	</div>	
+</body>
+<script type="text/javascript">
+	new Vue({
+		el: '#app5',
+		data: {
+			messages: [{_id:'1', text:'text'}],
+			toAdd: ''
+		},
+		created() {
+			axios.get('http://localhost:3030/messages/')
+				.then (response => {
+					this.messages = response.data.data
+				})
+		},
+		methods: {
+			add() {
+				axios.post('http://localhost:3030/messages/', {text: this.toAdd})
+					.then(response => {
+						if (response.status == 201) {
+							this.messages.push(response.data)
+							this.toAdd = ''
+						}
+					})
+			},
+			deleteItem (id) {
+				console.log("delete")
+				axios.delete('http://localhost:3030/messages/' + id)
+					.then(response=> {
+						if (response.status < 400) {
+							this.messages.splice(this.messages.findIndex(e=> e.id === id), 1)
+						}
+					})
+			},
+			edit (id, text) {
+				axios.put('http://localhost:3030/messages/' + id, {text})
+					.then(response => {
+						if (response.status < 400) {
+							console.info(response.status)
+						}
+					})
+			}
+		}
+	})
+</script>
+
+<!-- 无限滚动 -->
+<div id="app6">
+	<p v-for="word in words">{{word}}</p>
+</div>
+<script type="text/javascript">
+	new Vue({
+		el: '#app6',
+		methods: {
+			bottomVisible() {
+				const visibleHeight = document.documentElement.clientHeight
+				const pageHeight = document.documentElement.scrollHeight
+				const scrolled = window.scrollY
+				const reachedBottom = visibleHeight + scrolled >= pageHeight
+				return reachedBottom || pageHeight < visibleHeight
+			},
+			addWord() {
+				axios.get('http://www.setgetgo.com/randomword/get.php')
+					.then(response => {
+						this.words.push(response.data)
+						// The method will recursively call itself until the page has enough words to fill the whole browser view.
+						if (this.bottomVisible) {
+							this.addWord()
+						}
+					})
+			}
+		},
+		created() {
+			// 绑定监听事件
+			window.addEventListener('scroll', () => {
+				// bottom 变化时，才会请求后端接口
+				this.bottom = this.bottomVisible()
+			})
+			this.addWord()
+		},
+		data: {
+			bottom:false,
+			words:[]
+		},
+		/** `watch`的语法如下:
+				'name of sate variable' (newValue, oldValue){}
+			计算属性顾名思义就是通过其他变量计算得来的另一个属性，fullName在它所依赖firstName，lastName这两个变量变化时重新计算自己的值。
+
+			另外，计算属性具有缓存。计算属性是基于它们的依赖进行缓存的。计算属性只有在它的相关依赖发生改变时才会重新求值。这就意味着只要 lastName和firstName都没有发生改变，多次访问 fullName计算属性会立即返回之前的计算结果，而不必再次执行函数。
+
+			而观察watch是观察一个特定的值，当该值变化时执行特定的函数。例如分页组件中，我们可以检测页码执行获取数据的函数。
+		*/
+
+		watch: {
+			bottom (bottom) {
+				console.log("watch: " + bottom)
+				if (bottom) 
+					this.addWord()
+			}
+		}
+	})
+</script>
+
+<!-- 创建一个过滤器 -->
+<div id="app7">
+	<h3>Who's better: Socrates or Plato?</h3>
+	<p>Technically, without Plato we wouldn't have<br>
+	much to go on when it comes to information about<br>
+	Socrates. Plato ftw!</p>
+	<form>
+		<label>Write your comment:</label>
+		<textarea v-model="message"></textarea>
+		<button @click.prevent="submit">Send!</button>
+	</form>
+	<p>Server got: {{response}}</p>
+</div>
+<script type="text/javascript">
+	new Vue({
+		el: '#app7',
+		methods: {
+			submit () {
+				axios.post('http://jsonplaceholder.typicode.com/comments',
+					{
+						body: this.message
+					}).then(response => {
+						this.response = response.data
+					})
+			}
+		},
+		data: {
+			message: '',
+			response: '...'
+		},
+		mounted () {
+			axios.interceptors.request.use(config => {
+				console.log(config)
+				if (config.data) {
+					const body = config.data.body.replace(/punk/i, '***')
+					config.data.body = body
+				}
+				return config
+			})
+		}
+	})
+</script>
+</html>

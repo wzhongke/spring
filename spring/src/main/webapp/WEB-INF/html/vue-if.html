@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script type="text/javascript" src="https://unpkg.com/vue"></script>
+	<title>Vue if</title>
+	<style type="text/css">
+		.warn {
+			background-color: mistyrose
+		}
+		#solution {
+			cursor: pointer;
+		}
+		.fade-enter {
+			opacity: 0
+		}
+		.fade-enter-active {
+			transition: opacity .5s;
+		}
+	</style>
+</head>
+<body>
+	<!-- 显示隐藏元素在web应用中属于最基本的操作， 在Vue中使用`v-if`和`v-show`指令 -->
+	<div id="ghost">
+		<!-- 只有当`isNight`为`true`的时候，下面的div才会展示，否则会使用`display:none;`来隐藏元素，适合展示隐藏元素。
+		   一般来说，使用`v-show`需要更少的资源，如果不确定一个元素是否会显示在页面上，那么使用`v-if`，`v-if`会节省CPU时间 -->
+		<div v-show="isNight">I'm a ghost</div>
+		<!-- 当`isNight`为`true`的时候，下面的div会动态添加到DOM中，否则DOM中是没有该元素的，适合一次性判断 -->
+		<div v-if="isNight">I'm a ghost</div>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: '#ghost',
+			data: {
+				// isNight: true
+			},
+			computed: {
+				// 还可以使用计算属性
+				isNight() {
+					return new Date().getHours() < 7
+				}
+			}
+		})
+	</script>
+
+	<div id="app1">
+		<!-- 将textarea中的值绑定到`memeText`变量中-->
+		<!-- 如果 `longText` 是 `true`，那么class `warn`将会添加到textarea上 -->
+		<textarea 
+			v-model="memeText" 
+			:class="{ warn: longText }"  
+			:maxlength="limit" name="" id="" cols="30" rows="10">
+		</textarea>
+		{{memeText.length}}
+		<!-- 当class比较多时，可以使用对象来处理 -->
+		<textarea
+			v-model="memeText"
+			:class="classes"
+			cols="30" rows="10"
+			>
+		</textarea>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: '#app1',
+			data: {
+				memeText: 'What if I told you ' + 'CSS can do that',
+				limit: 50,
+				// 可以使用data 对象属性
+				// classes: {
+				// 	warn: true
+				// }
+			},
+			computed: {
+				longText() {
+					return this.limit - this.memeText.length <= 10
+				},
+				// 也可以使用计算属性
+				classes() {
+					return {
+						warn: this.limit - this.memeText.length <= 10
+					}
+				}
+			}
+		})
+	</script>
+
+	<div id="app2">
+		<article>
+			They call me fruit.<br>
+			They call me fish.<br>
+			They call me insect.<br>
+			But actually I'm not one of those.
+			<div id="solution" @click="showSolution = true">
+			<!-- transition的`name`属性是CSS类选择器的开始词，Vue根据屏幕上是否展示该元素来寻找相应的样式，如果`name`没有指定，那么Vue将会使用`v`来寻找CSS -->
+			<!-- name-enter: 这个是`enter`开始的class，它在元素插入之前被应用，在一帧之后被移除 -->
+			<!-- name-enter-active: 这是`enter`进入的持久class。它在元素被插入之前应用，并且在转换/动画结束时被移除。使用它来定义转换特征 -->
+			<!-- name-enter-to: 这是`enter`结束的class。当`name-enter`被移除之后被应用 -->
+			<!-- name-leave: 这是`leave`的起始类。当触发`leave`转换时，被应用，一帧之后被移除 -->
+			<!-- name-leave-active: 同`enter`的name-enter-active -->
+			<!-- name-levave-to: 结束时的class -->
+				I am a <transition name="fade"><span id="dragon" v-show="showSolution">Dragon</span></transition>
+			</div>
+		</article>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: '#app2',
+			data: {
+				showSolution: false
+			}
+		})
+	</script>
+
+	<!-- `v-html` 指令-->
+	<div id="app3" v-html="htmlTexts[0]">
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: '#app3',
+			data: {
+				htmlTexts: [
+				"here is <br> a test <i>html</i>"
+				]
+			}
+		})
+	</script>
+</body>
+</html>
