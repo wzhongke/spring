@@ -15,9 +15,11 @@ public class BeanApplicationContextAware implements ApplicationContextAware, Bea
 	private String name;
 	private ApplicationContext context;
 
+
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		applicationContext.getApplicationName();
+		this.context = applicationContext;
 	}
 
 	@Override

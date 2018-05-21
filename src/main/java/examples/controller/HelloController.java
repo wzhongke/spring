@@ -1,6 +1,7 @@
 package examples.controller;
 
-import examples.configuration.PropertiesConfig;
+import examples.bean.PropertiesConfig;
+import examples.bean.RequestJson;
 import examples.instantiating.ExampleBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,6 +35,24 @@ public class HelloController {
 	@RequestMapping(value = "/hello")
 	public String hello (String name) {
 		return "Hello " + name + "!" + config.getBaseDir();
+	}
+
+	/**
+	 * 只处理请求是 application/json 类型的数据，请求方法必须是 POST
+	 * 返回结果是 application/json;charset=UTF-8 格式的数据
+	 * Spring 会将接收到的 JSON 请求自动转换成对象，把返回的对象转换成 JSON
+	 */
+	@RequestMapping(value = "/json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+			consumes = "application/json", method = RequestMethod.POST)
+	public RequestJson json (@RequestBody RequestJson json) {
+		System.out.println(json);
+		json.setName("server");
+		return json;
+	}
+
+	@GetMapping("/exception")
+	public void exception () {
+		throw new NullPointerException();
 	}
 
 	/** 使用@PathVariable绑定annotation */

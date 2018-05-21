@@ -27,6 +27,9 @@ public class ExampleBean {
 		this.ultimateAnswer = ultimateAnswer;
 	}
 
+	/**
+	 * 构造完成后执行
+	 */
 	@PostConstruct
 	public void init() {
 		// do some initialization work
@@ -36,7 +39,7 @@ public class ExampleBean {
 	@PreDestroy
 	public void destroy() {
 		// do some initialization work
-		System.out.printf("destroy " + this);
+		System.out.println("destroy " + this);
 	}
 
 	public int getYears() {

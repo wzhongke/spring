@@ -1243,7 +1243,7 @@ var requirejs, require, define;
             onError: onError,
 
             /**
-             * Set a configuration for the context.
+             * Set a bean for the context.
              * @param {Object} cfg config object to integrate.
              */
             configure: function (cfg) {

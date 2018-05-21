@@ -37,9 +37,10 @@ public class Annotation {
 	/**
 	 * `@Autowired` 可以用在构造器上，也可以用在 setter 方法上，也可以用在属性上
 	 * `@Autowired` 是根据类型匹配的，默认的required是false
+     * `@Qualifier` 指定注入的 bean 的名字或 id
 	 */
 	@Autowired(required = false)
-	public Annotation(@Nullable ExampleBean exampleBean) {
+	public Annotation(@Nullable @Qualifier("exampleBeanJava")ExampleBean exampleBean) {
 		this.exampleBean = exampleBean;
 	}
 

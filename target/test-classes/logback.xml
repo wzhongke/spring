@@ -1,7 +1,0 @@
-<configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml" />
-    <!-- 调整spring打印log的级别 -->
-    <logger name="org.springframework" level="ERROR"/>
-    <logger name="com.mkyong" level="DEBUG"/>
-    <logger name="org.mongodb" level="ERROR"/>
-</configuration>
