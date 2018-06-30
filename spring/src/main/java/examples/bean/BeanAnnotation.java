@@ -38,18 +38,17 @@ public class BeanAnnotation {
 		return getExampleBean();
 	}
 
-	@Bean
-	@ConditionalOnMissingBean(InternalResourceViewResolver.class)
-	public InternalResourceViewResolver defaultViewResolver () {
-		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-		resolver.setPrefix("/WEB-INF/jsp/");
-		resolver.setSuffix(".jsp");
-		return resolver;
-	}
-
-	@Bean
-	public MappingJackson2JsonView jsonView(){
-		MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
-		return jsonView;
-	}
+//	@Bean
+//	@ConditionalOnMissingBean(InternalResourceViewResolver.class)
+//	public InternalResourceViewResolver defaultViewResolver () {
+//		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+//		resolver.setPrefix("/WEB-INF/jsp/");
+//		resolver.setSuffix(".jsp");
+//		return resolver;
+//	}
+//
+//	@Bean
+//	public MappingJackson2JsonView jsonView(){
+//		return new MappingJackson2JsonView();
+//	}
 }

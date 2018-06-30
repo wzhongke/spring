@@ -1,6 +1,6 @@
 package algorithms;
 
-public class BlacklistEntry {
+public class BlacklistEntry<T> {
 
 	public String id;
 	public String key;
