@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 引入属性文件，文件中的属性会覆盖使用 <property/> 定义的属性
+     也可以在Java 中引入-->
+    <!--<properties resource="config.properties">-->
+        <!--<property name="username" value="wang"/>-->
+        <!--<property name="password" value="Wang@2018" />-->
+    <!--</properties>-->
+
+    <!-- 使用 xml 构建 SQLSessionFactory -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${mysql}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 加载映射文件 mapper -->
+   <mappers>
+       <mapper resource="mybatis/UserMapper.xml"/>
+   </mappers>
+</configuration>
