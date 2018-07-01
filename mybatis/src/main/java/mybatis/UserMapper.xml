@@ -4,9 +4,39 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="mybatis.UserMapper">   <!-- 命名空间，名字可以随意起，只要不冲突即可 -->
+
+    <resultMap id="person" type="person">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="age" property="age" />
+    </resultMap>
+
     <!-- 对象映射，可以不写 -->
     <!-- 查询功能，resultType 设置返回值类型 -->
-    <select id="findAll" resultType="mybatis.data.Person">  <!-- 书写 SQL 语句 -->
-        SELECT * FROM Person
+    <select id="findAll" resultMap="person"> <!-- 书写 SQL 语句 -->
+        SELECT * FROM person
     </select>
+
+    <select id="findOne" resultType="person">
+        SELECT * FROM person LIMIT 1
+    </select>
+
+    <!-- 相当于 jdbc 中的预处理语句：
+        String selectPerson = "SELECT * FROM PERSON WHERE ID=?";
+        PreparedStatement ps = conn.prepareStatement(selectPerson);
+        ps.setInt(1,id);
+     -->
+    <select id="findById" parameterType="int" resultType="person" timeout="1000">
+        SELECT * FROM person WHERE id=#{id}
+    </select>
+
+    <!-- 在 SQL 语句中可以使用属性值 -->
+    <select id="findByName" resultType="person">
+        SELECT * FROM person WHERE name='${name}'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO person ( name, age, sex)
+        VALUES (#{name}, #{age}, #{sex})
+    </insert>
 </mapper>

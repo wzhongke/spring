@@ -1,10 +1,14 @@
 package mybatis.data;
 
+/**
+ * @author wangzhongke
+ */
 public class Person {
 
 	private Integer id;
 	private String name;
 	private Integer age;
+	private SexEnum sex;
 
 	public Integer getId() {
 		return id;
@@ -28,6 +32,14 @@ public class Person {
 
 	public void setAge(Integer age) {
 		this.age = age;
+	}
+
+	public SexEnum getSex() {
+		return sex;
+	}
+
+	public void setSex(SexEnum sex) {
+		this.sex = sex;
 	}
 
 	@Override
