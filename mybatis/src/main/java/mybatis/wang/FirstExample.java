@@ -10,6 +10,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author wangzhongke
@@ -22,7 +23,9 @@ public class FirstExample {
 	public static SqlSessionFactory getXmlConf () throws IOException {
 		String resource = "mybatis/mybatis-config.xml";
 		InputStream inputStream = Resources.getResourceAsStream(resource);
-		return new SqlSessionFactoryBuilder().build(inputStream);
+		Properties prop =new Properties();
+		prop.load(Resources.getResourceAsStream("config.properties"));
+		return new SqlSessionFactoryBuilder().build(inputStream, prop);
 	}
 
 	private static int insert (SqlSession session) {
@@ -42,14 +45,18 @@ public class FirstExample {
 		return sqlSession.selectOne("mybatis.UserMapper.findById", id);
 	}
 
-	private static Person selectByName (SqlSession sqlSession) {
-		return sqlSession.selectOne("mybatis.UserMapper.findByName");
+	private static void update (SqlSession sqlSession) {
+
+	}
+
+	private static List<Person> selectByName (SqlSession sqlSession) {
+		return sqlSession.selectList("mybatis.UserMapper.findByName");
 	}
 
 	public static void main(String[] args) throws IOException {
 		SqlSessionFactory factory = getXmlConf();
 		SqlSession session = factory.openSession();
-//		System.out.println(insert(session));
+		System.out.println(insert(session));
 //		session.commit();
 //		System.out.println(select(session));
 //		System.out.println(selectById(session, 1));

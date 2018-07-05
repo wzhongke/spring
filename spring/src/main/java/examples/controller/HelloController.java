@@ -33,7 +33,7 @@ public class HelloController {
 
 	@RequestMapping(value = "/hello")
 	public String hello (String name) {
-		return "Hello " + name + "!" + config.getBaseDir();
+		return "Hello " + name + "!";
 	}
 
 	/** 使用@PathVariable绑定annotation */

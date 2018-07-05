@@ -40,16 +40,4 @@
         INSERT INTO person ( name, age, sex)
         VALUES (#{name, javaType=String, jdbcType=VARCHAR, typeHandler=mybatis.handler.ExampleTypeHandler}, #{age}, #{sex})
     </insert>
-
-    <update id="updateById">
-        UPDATE person SET
-          name=#{name},
-          age=#{age},
-          sex=#{sex}
-          WHERE id=#{id}
-    </update>
-
-    <delete id="deleteById" parameterType="int">
-        DELETE FROM person WHERE id=#{id}
-    </delete>
 </mapper>
