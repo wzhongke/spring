@@ -1,4 +1,4 @@
-package examples.service;
+package examples.file;
 
 public class StorageException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package examples.service;
+package examples.file;
 
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.request.async.DeferredResult;
