@@ -6,11 +6,11 @@
 </div>
 
 <div>
-    <form method="POST" enctype="multipart/form-data" action="/uploadFiles">
-        选择一个文件:
-        <input type="file" name="files" />
-        <br/><br/>
-        <input type="submit" value="上传" />
+    <form method="POST" enctype="multipart/form-data" action="/files/multi">
+        <table>
+            <tr><td>File to upload:</td><td><input type="file" name="file" multiple /></td></tr>
+            <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
+        </table>
     </form>
 </div>
 

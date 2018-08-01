@@ -1,4 +1,4 @@
-package examples.service;
+package examples.file;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,12 +22,12 @@ import java.util.stream.Stream;
  * @author wangzhongke
  */
 @Service
-public class FileSystemStorageService implements StorageService {
+public class FileSystemStorageService {
 
     private final Path rootLocation;
 
     @Autowired
-    public FileSystemStorageService(@Value("/tmp/") String path) {
+    public FileSystemStorageService(@Value("tmp/") String path) {
         Path rootLocation1;
         try {
             File directory = new File("");
@@ -43,7 +43,10 @@ public class FileSystemStorageService implements StorageService {
         this.rootLocation = rootLocation1;
     }
 
-    @Override
+    public Path getRootLocation() {
+        return this.rootLocation;
+    }
+
     public void store(MultipartFile file) {
         try {
             if (file.isEmpty()) {
@@ -57,7 +60,6 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
-    @Override
     public Stream<Path> loadAll() {
         try {
             return Files.walk(this.rootLocation, 1)
@@ -68,12 +70,10 @@ public class FileSystemStorageService implements StorageService {
 
     }
 
-    @Override
     public Path load(String filename) {
         return rootLocation.resolve(filename);
     }
 
-    @Override
     public String deleteFile (String username, String filename) {
         Path path = this.rootLocation.resolve(username).resolve(filename);
         if (Files.exists(path)) {
@@ -89,7 +89,6 @@ public class FileSystemStorageService implements StorageService {
         return "{message:success}";
     }
 
-    @Override
     public boolean saveImage(byte[] data, String imageName) throws IOException {
         int len = data.length;
         FileOutputStream outputStream = new FileOutputStream(new File(rootLocation.toString(),imageName));
@@ -101,7 +100,6 @@ public class FileSystemStorageService implements StorageService {
         return true;
     }
 
-    @Override
     public Resource loadAsResource(String filename) {
         try {
             Path file = load(filename);
@@ -118,12 +116,10 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
-    @Override
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
 
-    @Override
     public void handleDif(final DeferredResult result) {
         new Thread(() -> {
             try {
@@ -135,12 +131,4 @@ public class FileSystemStorageService implements StorageService {
         }).start();
     }
 
-    @Override
-    public void init() {
-        try {
-            Files.createDirectory(rootLocation);
-        } catch (IOException e) {
-            throw new StorageException("Could not initialize storage", e);
-        }
-    }
 }

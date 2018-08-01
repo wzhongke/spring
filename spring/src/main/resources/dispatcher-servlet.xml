@@ -21,9 +21,13 @@
     <!-- 通常，每个XML配置文件都表示体系结构中的一个逻辑层或模块。 -->
     <!-- 使用 import 引入其他配置文件
         import 路径说明：resource属性中使用的是相对路径，相对于当前文件的路径，如果写成绝对路径格式（以 '\' 开头）也会被看做相对路径
-        当然使用 file:E:/config/service.xml 或者 `classpath:/config/service` 也可以
+        当然使用 file:E:/config/file.xml 或者 `classpath:/config/service` 也可以
     -->
     <import resource="services.xml" />
+
+    <mvc:annotation-driven />
+    <context:component-scan base-package="examples"/>
+
 
     <!-- 构造器实例化 bean - 参数类型方式匹配 -->
     <bean id="exampleBean" class="examples.instantiating.ExampleBean">
@@ -206,20 +210,28 @@
     <bean name="beanAware1 beanAware2" class="examples.aware.BeanApplicationContextAware" />
 
 
-    <!--<bean id="mappingJacksonHttpMessageConverter"-->
-          <!--class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
-        <!--<property name="supportedMediaTypes">-->
-            <!--<list>-->
-                <!--<value>text/html;charset=UTF-8</value>-->
-                <!--<value>application/json;charset=utf-8</value>-->
-            <!--</list>-->
-        <!--</property>-->
-    <!--</bean>-->
+    <bean id="mappingJacksonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+                <value>application/json;charset=utf-8</value>
+            </list>
+        </property>
+    </bean>
 
-    <!-- 多文件上传 MultipartResolver -->
-    <!--<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
-        <!--<property name="maxUploadSizePerFile" value="526002600"/>-->
-    <!--</bean>-->
+     <!--多文件上传 MultipartResolver-->
+    <!-- 使用 springboot 的 Application 启动时，不能包含下面的 bean，使用 tomcat 时，必须包含 -->
+    <!-- 注意：CommonsMultipartResolver的id是固定不变的，一定是multipartResolver，不可修改 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 如果上传后出现文件名中文乱码可以使用该属性解决 -->
+        <property name="defaultEncoding" value="utf-8"/>
+        <!-- 单位是字节，不设置默认不限制总的上传文件大小，这里设置总的上传文件大小不超过1M（1*1024*1024） -->
+        <property name="maxUploadSize" value="1048576"/>
+        <!-- 跟maxUploadSize差不多，不过maxUploadSizePerFile是限制每个上传文件的大小，而maxUploadSize是限制总的上传文件大小 -->
+        <property name="maxUploadSizePerFile" value="1048576"/>
+    </bean>
+
     <!-- HTTP 缓存对于静态资源的支持 -->
     <mvc:resources mapping="/static/**" location="/static/">
         <mvc:cache-control max-age="3600" cache-public="true" />
