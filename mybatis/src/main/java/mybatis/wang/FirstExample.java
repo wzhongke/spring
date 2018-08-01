@@ -2,6 +2,8 @@ package mybatis.wang;
 
 import mybatis.data.Person;
 import mybatis.data.SexEnum;
+import org.apache.ibatis.datasource.DataSourceFactory;
+import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;

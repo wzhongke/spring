@@ -14,7 +14,7 @@
 
     <!-- 对象映射，可以不写 -->
     <!-- 查询功能，resultType 设置返回值类型 -->
-    <select id="findAll" resultMap="person"> <!-- 书写 SQL 语句 -->
+    <select id="findAll" resultMap="hashmap"> <!-- 书写 SQL 语句 -->
         SELECT * FROM person
     </select>
 
@@ -34,6 +34,14 @@
     <!-- 在 SQL 语句中可以使用属性值 -->
     <select id="findByName" resultType="person">
         SELECT * FROM person WHERE name='${username}'
+    </select>
+    <!-- 动态拼接 MySQL -->
+    <select id="findByNameDynamic"
+            resultType="person">
+        SELECT * FROM person
+        <if test="title != null">
+            WHERE name like #{name}
+        </if>
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
