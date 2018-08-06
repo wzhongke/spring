@@ -49,7 +49,6 @@ public class TimeClientHandle implements Runnable {
                 SelectionKey key = null;
                 while (it.hasNext()) {
                     key = it.next();
-                    it.remove();
                     handleInput(key);
                     key.cancel();
                     if (key.channel() != null) {

@@ -37,6 +37,7 @@ public class CommonServer {
 				.childOption(ChannelOption.SO_KEEPALIVE, true);
 
 			// Bind and start to accept incoming connections.
+			System.out.println("Server listen port " + port);
 			ChannelFuture f = b.bind(port).sync();
 
 			// Wait until the server socket is closed.

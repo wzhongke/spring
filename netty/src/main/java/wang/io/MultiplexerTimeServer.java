@@ -17,7 +17,7 @@ public class MultiplexerTimeServer implements Runnable {
 
     private ServerSocketChannel serverChannel;
 
-    private volatile boolean stop;
+    private volatile boolean stop = false;
 
     /**
      *  初始化多路复用器，绑定监听端口
@@ -46,6 +46,7 @@ public class MultiplexerTimeServer implements Runnable {
 
     @Override
     public void run() {
+        System.out.println(stop);
         while (!stop) {
             try {
                 selector.select(1000);
@@ -54,7 +55,6 @@ public class MultiplexerTimeServer implements Runnable {
                 SelectionKey key = null;
                 while (it.hasNext()) {
                     key = it.next();
-                    it.remove();
                     handleInput(key);
                     key.cancel();
                     if (key.channel() != null) {

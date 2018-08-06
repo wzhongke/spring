@@ -11,11 +11,11 @@ public class EchoServer {
 		if (args.length > 0) {
 			port = Integer.parseInt(args[0]);
 		} else {
-			port = 9797;
+			port = 8080;
 		}
 		new CommonServer(port, new ChannelInitializer<SocketChannel>() {
 			@Override
-			public void initChannel(SocketChannel ch) throws Exception {
+			public void initChannel(SocketChannel ch) {
 				ch.pipeline().addLast(new EchoServerHandler());
 			}
 		}).run();
