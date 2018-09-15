@@ -3,10 +3,19 @@ package wang.netty.example.echo;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
 
+/**
+ * @author wangzhongke
+ *
+ * ChannelHandlerAdapter
+ * SimpleChannelInboundHandler: 会自动释放资源，不能够存储任何以备后用的信息。
+ *
+ */
+@ChannelHandler.Sharable
 public class EchoServerHandler extends ChannelHandlerAdapter {
 
 	@Override

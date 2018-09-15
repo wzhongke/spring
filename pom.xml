@@ -11,8 +11,10 @@
     <modules>
         <module>spring</module>
         <module>mybatis</module>
-        <module>netty</module>
+        <module>http</module>
         <module>rpc</module>
+        <module>algorithms</module>
+        <module>threads</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

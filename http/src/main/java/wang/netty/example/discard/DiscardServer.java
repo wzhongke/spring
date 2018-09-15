@@ -1,22 +1,20 @@
-package wang.netty.example;
+package wang.netty.example.discard;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-public class CommonServer {
+public class DiscardServer {
 
 	private int port;
-	private ChannelHandlerAdapter handler;
 
-	public CommonServer(int port) {
+	public DiscardServer(int port) {
 		this.port = port;
-	}
-
-	public CommonServer(int port, ChannelHandlerAdapter handler) {
-		this.port = port;
-		this.handler = handler;
 	}
 
 	public void run () throws InterruptedException {
@@ -30,14 +28,18 @@ public class CommonServer {
 			ServerBootstrap b = new ServerBootstrap();
 			b.group(bossGroup, workerGroup)
 				.channel(NioServerSocketChannel.class)
-				.childHandler(handler)
+				.childHandler(new ChannelInitializer<SocketChannel>() {
+					@Override
+					public void initChannel(SocketChannel ch) throws Exception {
+						ch.pipeline().addLast(new DiscardServerHandler());
+					}
+				})
 				// option 提供给NioServerSocketChannel用来接收进来的连接
 				.option(ChannelOption.SO_BACKLOG, 128)
 				// childOption 是对父管道ServerChannel接收到的连接的配置
 				.childOption(ChannelOption.SO_KEEPALIVE, true);
 
 			// Bind and start to accept incoming connections.
-			System.out.println("Server listen port " + port);
 			ChannelFuture f = b.bind(port).sync();
 
 			// Wait until the server socket is closed.
@@ -48,5 +50,16 @@ public class CommonServer {
 			workerGroup.shutdownGracefully();
 			bossGroup.shutdownGracefully();
 		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		int port;
+		if (args.length > 0) {
+			port = Integer.parseInt(args[0]);
+		} else {
+			port = 9797;
+		}
+		System.out.println("中文");
+		new DiscardServer(port).run();
 	}
 }

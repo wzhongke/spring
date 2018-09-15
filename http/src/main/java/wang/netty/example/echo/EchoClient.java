@@ -10,6 +10,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.net.InetSocketAddress;
 
+/**
+ * @author wangzhongke
+ */
 public class EchoClient {
 
     private final String host;
@@ -20,7 +23,7 @@ public class EchoClient {
         this.port = port;
     }
 
-    public void start() throws Exception {
+    private void start() throws Exception {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();

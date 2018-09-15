@@ -1,10 +1,13 @@
 package algorithms;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * AC 多模匹配算法，使用节点方式，适用于稀疏性
+ * @author wangzhongke
+ */
 public class AhoCorasickAutomation {
 
 	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -25,8 +28,6 @@ public class AhoCorasickAutomation {
 		/** 当前结点的孩子结点不能匹配文本串中的某个字符时，下一个应该查找的结点*/
 		Node fail;
 
-		List<BlacklistEntry<String>> entries = new ArrayList<>();
-
 		public boolean isWord(){
 			return str != null;
 		}
@@ -34,7 +35,7 @@ public class AhoCorasickAutomation {
 	}
 
 	/** target表示待查找的目标字符串集合*/
-	public AhoCorasickAutomation(List<BlacklistEntry<String>> target){
+	public AhoCorasickAutomation(List<String> target){
 		root = new Node();
 		if (target != null && target.size() > 0) {
 			wlock.lock();
@@ -45,26 +46,22 @@ public class AhoCorasickAutomation {
 	}
 
 	/** 由目标字符串构建Trie树*/
-	private void buildTrieTree(List<BlacklistEntry<String>> target)  {
-		for (BlacklistEntry<String> entry: target) {
-			String[] keys = entry.key.split("\ue40a");
-			for (String key: keys) {
-				if (key == null ||key.length() == 0) {
-					continue;
-				}
-				Node curr = root;
-				for (int i = 0; i < key.length(); i++) {
-					Character c = key.charAt(i);
-
-					if (!curr.map.containsKey(c)) {
-						curr.map.put(c, new Node());
-					}
-					curr = curr.map.get(c);
-				}
-		        /* 将每个目标字符串的最后一个字符对应的结点变成终点 */
-				curr.str = key;
-				curr.entries.add(entry);
+	private void buildTrieTree(List<String> target)  {
+		for (String key: target) {
+			if (key == null ||key.length() == 0) {
+				continue;
 			}
+			Node curr = root;
+			for (int i = 0; i < key.length(); i++) {
+				Character c = key.charAt(i);
+
+				if (!curr.map.containsKey(c)) {
+					curr.map.put(c, new Node());
+				}
+				curr = curr.map.get(c);
+			}
+	        /* 将每个目标字符串的最后一个字符对应的结点变成终点 */
+			curr.str = key;
 		}
 	}
 
@@ -113,10 +110,10 @@ public class AhoCorasickAutomation {
 	}
 
 	/** 在文本串中查找所有的目标字符串*/
-	public BlacklistEntry search(String text) {
+	public HashSet<String> search(String text) {
         /*创建一个表示存储结果的对象*/
 		/*表示在文本字符串中查找的结果，key表示目标字符串， value表示目标字符串在文本串出现的位置*/
-		HashMap<String, List<BlacklistEntry<String>>> result = new HashMap<>();
+		HashSet<String> result = new HashSet<>();
 		rlock.lock();
 		Node curr = root;
 		int i = 0;
@@ -131,13 +128,21 @@ public class AhoCorasickAutomation {
 				curr = curr.map.get(c);
 
 				if (curr.isWord()) {
-					result.put(curr.str, curr.entries);
+					result.add(curr.str);
 				}
 
 				 /*这里很容易被忽视，因为一个目标串的中间某部分字符串可能正好包含另一个目标字符串，
                  * 即使当前结点不表示一个目标字符串的终点，但到当前结点为止可能恰好包含了一个字符串*/
-				if (curr.fail != null && curr.fail.isWord()) {
-					result.put(curr.fail.str, curr.fail.entries);
+				 /* 还需要回溯 fail 节点，否则会错过一些包含的内容
+				    关键词： bc, abc, c
+				    匹配词 abcd
+				  */
+				Node failNode = curr.fail;
+				while (failNode != null) {
+					if (failNode.isWord()) {
+						result.add(failNode.str);
+					}
+					failNode = failNode.fail;
 				}
 				/*索引自增，指向下一个文本串中的字符*/
 				i++;
@@ -155,68 +160,23 @@ public class AhoCorasickAutomation {
 		}
 
 		rlock.unlock();
-		for(Map.Entry<String, List<BlacklistEntry<String>>> entry : result.entrySet()){
-			if (entry.getValue() != null) {
-				for (BlacklistEntry ent : entry.getValue()) {
-					int hintKey = 0;
-					for (String key: ent.keys) {
-						if (key.equals(entry.getKey()) || result.containsKey(key)) {
-							hintKey ++;
-						} else {
-							break;
-						}
-					}
-					if (hintKey == ent.multiNum) {
-						return ent;
-					}
-				}
-			}
-		}
-		return null;
+		return result;
 	}
 
 
-	public static void main(String[] args) throws IOException {
-		List<BlacklistEntry<String>> target = new ArrayList<>();
-//		try (BufferedReader reader = new BufferedReader( new InputStreamReader(new FileInputStream("D://xshell//secadmin_output1_new.dat.agent"), "GBK"))) {
-//			String line = "";
-//			while ((line = reader.readLine()) != null) {
-//				String[] ls = line.split("\t");
-//				BlacklistEntry<String> entry = new BlacklistEntry<>();
-//				entry.id = ls[0];
-//				entry.key = ls[1];
-//				entry.value = Integer.parseInt(ls[2]);
-//				entry.keys = entry.key.split("\ue40a");
-//				entry.multiNum = entry.keys.length;
-//				target.add(entry);
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		BlacklistEntry<String> entry = new BlacklistEntry<>();
-		entry.key = "释放刘晓波";
-		entry.multiNum = 1;
-		entry.keys = "释放刘晓波".split("\ue40a");
-
-		target.add(entry);
-		entry = new BlacklistEntry<>();
-		entry.key = "刘晓波";
-		entry.multiNum = 1;
-		entry.keys = "刘晓波".split("\ue40a");
-		target.add(entry);
-
+	public static void main(String[] args) {
+		List<String> target = new ArrayList<>();
+		target.add("his");
+		target.add("her");
+		target.add("he");
 		AhoCorasickAutomation aca = new AhoCorasickAutomation(target);
 
-		String text = "中方驳斥美方要求释放刘晓波:勿充当别国法官_新闻频道_中国青年网 问:美国国务卿克里24日发表书面声明,要求中国政府释放等人,并对中国人权表示关注.中方欢迎和支持美古双方恢复正常关系,并希望美方尽早取消...";
+		String text = "he love her, but her love another he";
 		long begin = System.currentTimeMillis();
 		System.out.println(System.currentTimeMillis() - begin);
 
 		begin = System.currentTimeMillis();
 		System.out.println(aca.search(text));
 		System.out.println(System.currentTimeMillis() -begin);
-
-		text = "所谓“因言获罪”是对刘晓波案的误读＿中国网刘晓波因犯煽动颠覆国家政权罪，被判处有期徒刑十一年，剥夺政治权利二年。此案已于．．．";
-		System.out.println(aca.search(text));
-
 	}
 }

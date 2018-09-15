@@ -3,6 +3,7 @@ package wang.netty.example.discard;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
 
 /**
@@ -10,7 +11,7 @@ import io.netty.util.ReferenceCountUtil;
  * Handles a server-side channel.
  * @author wangzhongke
  */
-public class DiscardServerHandler extends ChannelHandlerAdapter {
+public class DiscardServerHandler extends SimpleChannelInboundHandler<Object> {
 
 	/**
 	 * 当读取信息时调用
@@ -26,6 +27,11 @@ public class DiscardServerHandler extends ChannelHandlerAdapter {
 		} finally {
 			ReferenceCountUtil.release(msg);
 		}
+	}
+
+	@Override
+	protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+
 	}
 
 	/**

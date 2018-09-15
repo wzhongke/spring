@@ -31,16 +31,13 @@ public class WuManber {
 
 	public static void main(String args[]){//测试
 		WuManber objWM=new WuManber();
-		List<BlacklistEntry> target = new ArrayList<>();
+		List<String> target = new ArrayList<>();
 
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("D://xshell//web_front_blacklist_new.agent"),"GBK"))) {
 			String line = "";
 			while ((line = reader.readLine()) != null) {
 				String[] ls = line.split("\t");
-				BlacklistEntry entry = new BlacklistEntry();
-				entry.key = ls[0];
-				entry.keys = entry.key.split("\ue40a");
-				entry.multiNum = entry.keys.length;
+				String entry = ls[0];
 				target.add(entry);
 			}
 		} catch (IOException e) {
@@ -52,7 +49,7 @@ public class WuManber {
 				String line = "";
 				long begin = System.currentTimeMillis();
 				while ((line = reader.readLine()) != null) {
-					BlacklistEntry entry = objWM.macth(line,new ArrayList<>(0));
+					String entry = objWM.macth(line,new ArrayList<>(0));
 					if (entry != null) {
 						System.out.println(entry);
 					}
@@ -71,9 +68,9 @@ public class WuManber {
 
 
 	//匹配
-	public BlacklistEntry macth(String content, List <Integer> levelSet) {
+	public String macth(String content, List <Integer> levelSet) {
 
-		HashMap<String, List<BlacklistEntry>> result = new HashMap<>();
+		HashMap<String, List<String>> result = new HashMap<>();
 		if (initFlag == false)
 			init();
 		List <AtomicPattern> aps = new ArrayList <>();
@@ -86,51 +83,29 @@ public class WuManber {
 				aps.addAll(tmpAps);
 				if(tmpAps.size()>0){
 					result.put(tmpAps.get(0).getPattern().str, tmpAps.get(0).entries);
-
 					iSameCount++;
 				}
 				i++;
-			} else
+			} else {
 				i = i + shiftTable[checkChar];
-		}
-		parseAtomicPatternSet(aps, levelSet);
-		//sResult.append(" 共有:").append(iSameCount).append("处不合格！");
-		for(Map.Entry<String, List<BlacklistEntry>> entry : result.entrySet()){
-			if (entry.getValue() != null) {
-				for (BlacklistEntry ent : entry.getValue()) {
-					int hintKey = 0;
-					for (String key: ent.keys) {
-						if (key.equals(entry.getKey()) || result.containsKey(key)) {
-							hintKey ++;
-						} else {
-							break;
-						}
-					}
-					if (hintKey == ent.multiNum) {
-						return ent;
-					}
-				}
 			}
 		}
+		parseAtomicPatternSet(aps, levelSet);
 		return null;
 	}
 
 
 	//加入关键词
-	public boolean addFilterKeyWord(List<BlacklistEntry> target, int level) {
+	public boolean addFilterKeyWord(List<String> target, int level) {
 		if (initFlag)
 			return false;
 		UnionPattern unionPattern = new UnionPattern();
-		for (BlacklistEntry entry: target) {
-			String[] keys = entry.key.split("\ue40a");
-			for (String key: keys) {
-				Pattern pattern = new Pattern(key);
-				AtomicPattern atomicPattern = new AtomicPattern(pattern);
-				unionPattern.addNewAtomicPattrn(atomicPattern);
-				unionPattern.setLevel(level);
-				atomicPattern.entries.add(entry);
-				atomicPattern.setBelongUnionPattern(unionPattern);
-			}
+		for (String key: target) {
+			Pattern pattern = new Pattern(key);
+			AtomicPattern atomicPattern = new AtomicPattern(pattern);
+			unionPattern.addNewAtomicPattrn(atomicPattern);
+			unionPattern.setLevel(level);
+			atomicPattern.setBelongUnionPattern(unionPattern);
 		}
 		tmpUnionPatternSet.addNewUnionPattrn(unionPattern);
 		return true;
@@ -262,7 +237,7 @@ class AtomicPattern {
 		this.pattern = pattern;
 	};
 	private Pattern pattern;
-	List<BlacklistEntry> entries = new ArrayList<>();
+	List<String> entries = new ArrayList<>();
 	public UnionPattern belongUnionPattern;
 	public UnionPattern getBelongUnionPattern() {
 		return belongUnionPattern;

@@ -1,4 +1,4 @@
-package wang.netty.httpclient;
+package wang.http;
 
 
 import org.apache.commons.lang.StringUtils;
@@ -396,6 +396,4 @@ public class HttpRequest {
 		trustManagerFactory.init(keyStore);
 		return trustManagerFactory.getTrustManagers();
 	}
-
-
 }
