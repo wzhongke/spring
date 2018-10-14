@@ -1,4 +1,4 @@
-package examples.configuration;
+package examples.bean.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

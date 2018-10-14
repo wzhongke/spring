@@ -1,7 +1,7 @@
 package examples.controller;
 
-import examples.configuration.PropertiesConfig;
-import examples.instantiating.ExampleBean;
+import examples.bean.configuration.PropertiesConfig;
+import examples.bean.instantiating.ExampleBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpMethod;

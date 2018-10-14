@@ -1,11 +1,8 @@
 package examples.bean;
 
-import examples.instantiating.ExampleBean;
+import examples.bean.instantiating.ExampleBean;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.*;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 @Configuration
 @ImportResource({"classpath:applicationContext.xml", "classpath:dispatcher-servlet.xml"})

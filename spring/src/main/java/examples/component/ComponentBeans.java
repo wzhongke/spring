@@ -1,6 +1,6 @@
 package examples.component;
 
-import examples.instantiating.ExampleBean;
+import examples.bean.instantiating.ExampleBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +22,7 @@ public class ComponentBeans {
 
 	@Bean
 	@Qualifier("protected")
-	public ExampleBean protectedInstance (
+	protected ExampleBean protectedInstance (
 		@Qualifier("public") ExampleBean publicBean,
 		@Value("#{privateInstance.ultimateAnswer}") String ultimateAnswer
 	) {

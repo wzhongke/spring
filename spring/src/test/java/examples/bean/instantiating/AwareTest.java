@@ -1,4 +1,4 @@
-package examples.instantiating;
+package examples.bean.instantiating;
 
 import examples.aware.BeanApplicationContextAware;
 import org.junit.Test;

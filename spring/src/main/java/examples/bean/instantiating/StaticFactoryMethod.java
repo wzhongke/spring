@@ -1,4 +1,4 @@
-package examples.instantiating;
+package examples.bean.instantiating;
 
 /**
  * @author wangzhongke

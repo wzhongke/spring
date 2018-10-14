@@ -1,7 +1,7 @@
 package examples.annotation;
 
 import com.sun.istack.internal.Nullable;
-import examples.instantiating.ExampleBean;
+import examples.bean.instantiating.ExampleBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Required;

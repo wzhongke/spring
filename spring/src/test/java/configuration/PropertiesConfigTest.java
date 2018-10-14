@@ -1,6 +1,6 @@
 package configuration;
 
-import examples.configuration.PropertiesConfig;
+import examples.bean.configuration.PropertiesConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

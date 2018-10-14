@@ -1,10 +1,16 @@
 package examples.app;
 
 import examples.component.NameGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.context.annotation.ComponentScan.Filter;
+
+import javax.annotation.PostConstruct;
 
 /**
  * includeFilters 是扫描匹配的内容，
@@ -18,6 +24,9 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 public class AppConfig {
 
 	public static void main(String [] args) {
+		ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext("dispatcher-servlet.xml");
 
+		// add a shutdown hook for the above context...
+		ctx.registerShutdownHook();
 	}
 }

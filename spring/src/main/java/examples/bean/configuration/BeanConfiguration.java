@@ -1,11 +1,12 @@
-package examples.configuration;
+package examples.bean.configuration;
 
-import examples.instantiating.ExampleBean;
+import examples.bean.instantiating.ExampleBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 /**
+ * 使用按照类型注入时， @Primary 注的bean会优先被注入
  * @author wangzhongke
  */
 @Configuration

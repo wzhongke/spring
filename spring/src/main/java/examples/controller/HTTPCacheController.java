@@ -1,6 +1,6 @@
 package examples.controller;
 
-import examples.instantiating.ExampleBean;
+import examples.bean.instantiating.ExampleBean;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

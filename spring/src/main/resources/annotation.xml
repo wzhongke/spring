@@ -16,12 +16,12 @@
     <context:component-scan base-package="examples.component" name-generator="examples.component.NameGenerator"/>
 
     <!-- @Autowired 注解如果有多个匹配的类型，可以使用primary来注入该bean -->
-    <bean class="examples.instantiating.ExampleBean" primary="true">
+    <bean class="examples.bean.instantiating.ExampleBean" primary="true">
         <constructor-arg type="int" value="75000"/>
         <constructor-arg type="java.lang.String" value="42" />
     </bean>
 
-    <bean class="examples.instantiating.ExampleBean" id="no-primary" name="noPrimary">
+    <bean class="examples.bean.instantiating.ExampleBean" id="no-primary" name="noPrimary">
         <constructor-arg type="int" value="25000"/>
         <constructor-arg type="java.lang.String" value="42" />
     </bean>
