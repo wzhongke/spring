@@ -19,11 +19,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sun.misc.BASE64Decoder;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URLDecoder;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -53,10 +53,26 @@ public class FileUploadController {
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-
         Resource file = storageService.loadAsResource(filename);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
             "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    @GetMapping("/files/content")
+    @ResponseBody
+    public void exportData(HttpServletResponse response) throws IOException {
+        String txt = "this is a txt file";
+        response.setContentType("text/plain");
+        response.setHeader("Content-Disposition", "attachment; filename=file.txt");
+        BufferedOutputStream out = null;
+        PrintWriter writer = response.getWriter();
+        String enter = "\r\n";
+        ServletOutputStream outStr = null;
+        for (int i=0; i<10; i++) {
+            writer.write((txt + enter));
+        }
+        writer.flush();
+        writer.close();
     }
 
     /* redirect: 浏览器的url也会改变 */
