@@ -16,6 +16,7 @@
         <module>algorithms</module>
         <module>threads</module>
         <module>util</module>
+        <module>spring-cloud</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
