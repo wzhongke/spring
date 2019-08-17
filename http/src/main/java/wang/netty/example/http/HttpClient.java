@@ -6,13 +6,21 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.*;
+import io.netty.util.CharsetUtil;
 import net.sf.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class HttpClient {
 
-	private Channel channel;
+
+	static HttpClientHandler clientHandler = new HttpClientHandler();
 
 	public void init() {
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -24,8 +32,16 @@ public class HttpClient {
 				.handler(new ChannelInitializer<SocketChannel>() {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
-						ChannelPipeline pipeline = ch.pipeline();
-						pipeline.addLast(new HttpClientHandler());
+						ChannelPipeline p = ch.pipeline();
+						p.addLast(new HttpClientCodec());
+						//聚合
+						p.addLast(new HttpObjectAggregator(1024 * 10 * 1024));
+
+						//解压
+						p.addLast(new HttpContentDecompressor());
+						p.addLast(clientHandler);
+						p.addLast(new HttpResponseDecoder());
+
 					}
 				});
 
@@ -39,10 +55,24 @@ public class HttpClient {
 					workerGroup.shutdownGracefully();
 				}
 			});
-			this.channel = f.channel();
 		} catch (Exception e) {
 
 		}
+	}
+
+	static HttpRequest getMessage() throws UnsupportedEncodingException, URISyntaxException {
+		QueryData data = new QueryData();
+		data.setQuery("中国");
+		data.setFrom("web");
+		DefaultFullHttpRequest request = new DefaultFullHttpRequest(
+			HttpVersion.HTTP_1_1, HttpMethod.POST, new URI("http://127.0.0.1:8081/").getRawPath());
+		request.headers().set(HttpHeaderNames.HOST, "127.0.0.1");
+		request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+		request.headers().set(HttpHeaderNames.ACCEPT_ENCODING, HttpHeaderValues.GZIP);
+		request.headers().set(HttpHeaderNames.CONTENT_TYPE,"application/json");
+		request.content().writeBytes(JSONObject.fromObject(data).toString().getBytes(CharsetUtil.UTF_8.name()));
+		request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes());
+		return request;
 	}
 
 	public static void main(String[] args) throws UnsupportedEncodingException, InterruptedException {
@@ -50,7 +80,15 @@ public class HttpClient {
 		client.init();
 		QueryData data = new QueryData();
 		data.setQuery("中国");
-		ChannelFuture res = client.channel.writeAndFlush(Unpooled.wrappedBuffer(JSONObject.fromObject(data).toString().getBytes("UTF8"))).sync();
-		Thread.sleep(1000);
+		for (int i=0;i<20;i++) {
+			ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor();
+			timer.scheduleWithFixedDelay(() -> {
+				try {
+					clientHandler.sendMessage(getMessage());
+				} catch (UnsupportedEncodingException | URISyntaxException e) {
+					e.printStackTrace();
+				}
+			}, 1, 10, TimeUnit.MICROSECONDS);
+		}
 	}
 }
