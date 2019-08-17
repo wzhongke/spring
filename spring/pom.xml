@@ -87,12 +87,13 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.sizeofagent</groupId>-->
-            <!--<artifactId>agent</artifactId>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${basedir}/src/main/webapp/WEB-INF/lib/SizeOfAgent.jar</systemPath>-->
-        <!--</dependency>-->
+
+        <dependency>
+            <groupId>com.sizeofagent</groupId>
+            <artifactId>agent</artifactId>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/SizeOfAgent.jar</systemPath>
+        </dependency>
 
         <!-- HikariCp 号称是最快的数据库连接池，阿里的 Druid 性能略低，但是提供了强大的监控和扩展功能，目前不需要-->
         <dependency>
