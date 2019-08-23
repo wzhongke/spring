@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Vue Components Combination</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.0/vue.js"></script>
+</head>
+<body>
+	<style type="text/css">
+		.course {
+			border: 1px solid black;
+			margin: 10px;
+			padding: 10px;
+		}
+	</style>
+	<div id="app">
+		<!-- 使用插值或者属性绑定值，都需要是 new Vue()中的内容，即其作用域是父作用域, component中的data()值只能在其template中使用 -->
+		<course :menu="menu1"></course>
+		<course :menu="menu2"></course>
+	</div>
+	<script type="text/javascript">
+	// 官方文档上是这么说的： Everything in the parent template is compiled in parent scope;
+	// everything in the child template is compiled in child scope.
+		Vue.component('dish', {
+			template: `
+				<p class="dish">
+				{{ham}} &lt;- Delicious!
+				</p>
+				`,
+			props: ['ham']
+		})
+		Vue.component('course', {
+			template: `
+				<section class="course">
+				<dish v-for="ham in menu" :ham="ham" :key="ham"></dish>
+				</section>
+				`,
+			props: {
+				menu: {
+					type: Array,
+					required: true,
+					validator (foodArray) {
+					return foodArray.every(food => typeof food === 'string') &&  foodArray.length === 4
+					}
+				}
+			}
+		})
+
+		new Vue({
+			el: '#app',
+			data: {
+				menu1: ['apple','red apple','梨','橘子'],
+				menu2: ['汉堡','noidea','热狗', 'what']
+			}
+		})
+	</script>
+
+	<!-- mixin -->
+	<style type="text/css">
+		.super {
+			filter: hue-rotate(120deg);
+		}
+	</style>
+	<div id="app2">
+		<man></man>
+		<cat></cat>
+	</div>
+	<script type="text/javascript">
+		// 公共内容, mixins为组件增加了灵活性，不同的组件中还可以复用某些功能
+		// 组件中的方法，计算属性等与mixins名字相同的话，组件中的方法生效
+		// hook函数会优先执行mixin中的方法，然后执行组件中的方法，如`created`
+		var superPowersMixin = {
+			data() {
+				return {
+					superPowers: false
+				}
+			},
+			methods: {
+				superMe() {
+					this.$el.classList.add("super")
+					this.superPowers = true
+				}
+			},
+			created () {
+				this.$options.template = 
+				`<div><h3 v-show="superPowers">super</h3>` + this.$options.template 
+				+ `<button @click="superMe" v-if="!superPowers">Super!</button></div>`
+			}
+		}
+		Vue.component('man', {
+			template: '<p>man</p>',
+			mixins : [superPowersMixin]
+		})
+		Vue.component('cat', {
+			template: '<p>cat</p>',
+			mixins : [superPowersMixin]
+		})
+		new Vue({el: '#app2'})
+	</script>
+</body>
+</html>

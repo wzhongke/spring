@@ -7,9 +7,6 @@
     <groupId>wang.spring.learn</groupId>
     <artifactId>spring</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <modules>
-        <module>../algorithms</module>
-    </modules>
     <packaging>pom</packaging>
     <properties>
         <java.version>1.8</java.version>
@@ -107,6 +104,10 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.11</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
 
     </dependencies>
