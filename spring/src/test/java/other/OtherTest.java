@@ -1,6 +1,6 @@
 package other;
 
-
+import examples.bean.instantiating.ExampleBean;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
@@ -23,5 +23,10 @@ public class OtherTest {
 		BeanFactory factory = new XmlBeanFactory(new ClassPathResource("services.xml"));
 		test.Test test = (test.Test) factory.getBean("test");
 		test.test();
+
+	public void testXmlBean() {
+		BeanFactory bf = new XmlBeanFactory(new ClassPathResource("services.xml"));
+		ExampleBean bean = (ExampleBean) bf.getBean("exampleBean");
+		System.out.println(bean.toString());
 	}
 }

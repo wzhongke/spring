@@ -20,6 +20,8 @@
         <module>nosql</module>
         <module>base</module>
         <module>spring-learn</module>
+        <module>design-patterns</module>
+        <module>grammar</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
