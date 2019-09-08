@@ -1,6 +1,6 @@
-package instantiating;
+package mysql;
 
-import examples.aware.BeanApplicationContextAware;
+import examples.dao.JdbcDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,14 +8,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:dispatcher-servlet.xml"})
-public class AwareTest {
+@ContextConfiguration({"classpath:applicationContext.xml"})
+public class JdbcDaoTest {
 
 	@Autowired
-	private BeanApplicationContextAware aware;
+	private JdbcDao dao;
 
 	@Test
-	public void testAware () {
-		System.out.println(aware.getName());
+	public void testDao () {
+		dao.save();
 	}
+
 }

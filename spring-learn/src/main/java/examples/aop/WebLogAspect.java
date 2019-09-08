@@ -31,7 +31,9 @@ public class WebLogAspect {
 	 */
 
 	@Pointcut("execution(* examples.controller.*.*(..))")
-	public void webLog() {}
+	public void webLog() {
+		System.out.println("webLog is executed");
+	}
 
 	@Before("webLog()")
 	public void doBefore (JoinPoint joinPoint) {

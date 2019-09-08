@@ -1,5 +1,6 @@
-package examples.bean.instantiating;
+package instantiating;
 
+import examples.bean.instantiating.MethodInjectionWithLookup;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

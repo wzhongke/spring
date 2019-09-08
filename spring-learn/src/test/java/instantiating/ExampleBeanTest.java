@@ -1,6 +1,7 @@
-package examples.bean.instantiating;
+package instantiating;
 
 import examples.bean.BeanAnnotation;
+import examples.bean.instantiating.ExampleBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

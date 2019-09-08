@@ -26,5 +26,7 @@
         <constructor-arg type="java.lang.String" value="42" />
     </bean>
 
-    <bean class="examples.annotation.Annotation" />
+    <bean class="examples.annotation.Annotation" >
+        <property name="exampleBean" ref="noPrimary"/>
+    </bean>
 </beans>

@@ -1,6 +1,7 @@
-package examples.bean.instantiating;
+package instantiating;
 
 
+import examples.bean.instantiating.ScopeProxy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
