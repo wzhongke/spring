@@ -1,7 +1,17 @@
 package com.wang;
 
-public class Main {
+class Submain {
+    Submain() {
+        System.out.println("submain");
+    }
+}
 
+public class Main extends Submain {
+
+    Main() {
+        super();
+        System.out.println("main");
+    }
     Main(Inter inter) {
         System.out.println("Inter");
     }
